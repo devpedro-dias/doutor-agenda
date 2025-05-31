@@ -1,6 +1,17 @@
 "use client";
 
 import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/src/_components/ui/alert-dialog";
 import { Badge } from "@/src/_components/ui/badge";
 import { Button } from "@/src/_components/ui/button";
 import {
@@ -13,10 +24,18 @@ import { Dialog, DialogTrigger } from "@/src/_components/ui/dialog";
 import { Separator } from "@/src/_components/ui/separator";
 import { formatCurrencyInCents } from "@/src/_helpers/currency";
 import { doctorsTable } from "@/src/db/schema";
-import { CalendarIcon, ClockIcon, DollarSignIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  DollarSignIcon,
+  TrashIcon,
+} from "lucide-react";
 import { getAvailability } from "../_helpers/availability";
 import UpsertDoctorForm from "./upsert-doctor-form";
 import { useState } from "react";
+import { useAction } from "next-safe-action/hooks";
+import { deleteDoctor } from "@/src/_actions/delete-doctor";
+import { toast } from "sonner";
 
 interface DoctorCardProps {
   doctor: typeof doctorsTable.$inferSelect;
@@ -32,6 +51,22 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
     .join("");
 
   const availability = getAvailability(doctor);
+
+  const deleteDoctorAction = useAction(deleteDoctor, {
+    onSuccess: () => {
+      toast.success("Médico deletado com sucesso!");
+    },
+    onError: () => {
+      toast.error("Erro ao deletadar médico!");
+    },
+  });
+
+  const handleDeleteDoctorClick = () => {
+    if (!doctor) return;
+    deleteDoctorAction.execute({
+      id: doctor?.id,
+    });
+  };
   return (
     <Card>
       <CardHeader className="flex items-center gap-4">
@@ -63,7 +98,7 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
         </Badge>
       </CardContent>
       <Separator />
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-2">
         <Dialog
           open={isUpsertDoctorDialogOpen}
           onOpenChange={setIsUpsertDoctorDialogOpen}
@@ -79,6 +114,31 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
             }}
             onSuccess={() => setIsUpsertDoctorDialogOpen(false)}
           />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="w-full">
+                <TrashIcon />
+                Deletar médico
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Tem certeza que deseja deletar esse médico?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação nao pode ser revertida. Isso irá deletar o médico e
+                  todas as consultas agendadas.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteDoctorClick}>
+                  Deletar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Dialog>
       </CardFooter>
     </Card>

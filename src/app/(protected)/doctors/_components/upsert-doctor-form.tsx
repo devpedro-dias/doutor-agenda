@@ -1,6 +1,7 @@
 "use client";
 
 import { upsertDoctor } from "@/src/_actions/upsert-doctor";
+
 import { Button } from "@/src/_components/ui/button";
 import {
   DialogContent,
@@ -27,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/_components/ui/select";
+import { doctorsTable } from "@/src/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
@@ -34,7 +36,6 @@ import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
 import { medicalSpecialties } from "../_constants";
-import { doctorsTable } from "@/src/db/schema";
 
 const formSchema = z
   .object({
