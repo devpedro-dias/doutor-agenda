@@ -1,12 +1,3 @@
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/src/_components/ui/form";
-import { Input } from "@/src/_components/ui/input";
 import { Button } from "@/src/_components/ui/button";
 import {
   Card,
@@ -16,8 +7,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/_components/ui/card";
-import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/src/_components/ui/form";
+import { Input } from "@/src/_components/ui/input";
+import { authClient } from "@/src/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -39,6 +42,7 @@ const registerSchema = z.object({
 });
 
 const SignupForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -48,8 +52,19 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    await authClient.signUp.email(
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+      },
+    );
   };
 
   return (
@@ -106,7 +121,14 @@ const SignupForm = () => {
             />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting && (
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Criar conta
             </Button>
           </CardFooter>
