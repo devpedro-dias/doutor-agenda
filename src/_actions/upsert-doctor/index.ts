@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 import { upsertDoctorSchema } from "./schema";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { revalidatePath } from "next/cache";
 
 dayjs.extend(utc);
 
@@ -56,4 +57,5 @@ export const upsertDoctor = actionClient
           ...parsedInput,
         },
       });
+    revalidatePath("/doctors");
   });
