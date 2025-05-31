@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -62,6 +63,13 @@ const SignupForm = () => {
       {
         onSuccess: () => {
           router.push("/dashboard");
+        },
+        onError: (ctx) => {
+          if (ctx.error.code === "USER_ALREADY_EXISTS") {
+            toast.error("Email já cadastrado");
+            return;
+          }
+          toast.error("Erro ao criar conta");
         },
       },
     );
