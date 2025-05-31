@@ -89,11 +89,11 @@ const UpsertDoctorForm = ({
       availableFromTime: doctor?.availableFromTime ?? "",
       availableToTime: doctor?.availableToTime ?? "",
     },
+    shouldUnregister: true,
   });
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
-      form.reset();
       onSuccess?.();
       toast.success("Médico adicionado com sucesso!");
     },
