@@ -1,5 +1,6 @@
 "use client";
 
+import { upsertDoctor } from "@/src/_actions/upsert-doctor";
 import { Button } from "@/src/_components/ui/button";
 import {
   DialogContent,
@@ -27,31 +28,32 @@ import {
   SelectValue,
 } from "@/src/_components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 import { useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 import { z } from "zod";
 import { medicalSpecialties } from "../_constants";
-import { NumericFormat } from "react-number-format";
 
 const formSchema = z
   .object({
-    name: z.string().trim().min(1, { message: "O nome é obrigatório" }),
-    speciality: z
-      .string()
-      .trim()
-      .min(1, { message: "A especialidade é obrigatória" }),
-    appointmentPrice: z
-      .number()
-      .min(1, { message: "O valor da consulta é obrigatório" }),
+    name: z.string().trim().min(1, {
+      message: "Nome é obrigatório.",
+    }),
+    specialty: z.string().trim().min(1, {
+      message: "Especialidade é obrigatória.",
+    }),
+    appointmentPrice: z.number().min(1, {
+      message: "Preço da consulta é obrigatório.",
+    }),
     availableFromWeekDay: z.string(),
     availableToWeekDay: z.string(),
-    availableFromTime: z
-      .string()
-      .trim()
-      .min(1, { message: "O horário de início é obrigatório" }),
-    availableToTime: z
-      .string()
-      .trim()
-      .min(1, { message: "O horário de término é obrigatório" }),
+    availableFromTime: z.string().min(1, {
+      message: "Hora de início é obrigatória.",
+    }),
+    availableToTime: z.string().min(1, {
+      message: "Hora de término é obrigatória.",
+    }),
   })
   .refine(
     (data) => {
@@ -59,17 +61,21 @@ const formSchema = z
     },
     {
       message:
-        "O horário de início não pode ser anterior ao horário de término",
+        "O horário de início não pode ser anterior ao horário de término.",
       path: ["availableToTime"],
     },
   );
 
-const UpsertDoctorForm = () => {
+interface UpsertDoctorFormProps {
+  onSuccess?: () => void;
+}
+
+const UpsertDoctorForm = ({ onSuccess }: UpsertDoctorFormProps = {}) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      speciality: "",
+      specialty: "",
       appointmentPrice: 0,
       availableFromWeekDay: "1",
       availableToWeekDay: "5",
@@ -78,8 +84,24 @@ const UpsertDoctorForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const upsertDoctorAction = useAction(upsertDoctor, {
+    onSuccess: () => {
+      form.reset();
+      onSuccess?.();
+      toast.success("Médico adicionado com sucesso!");
+    },
+    onError: () => {
+      toast.error("Erro ao adicionar médico!");
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    upsertDoctorAction.execute({
+      ...values,
+      availableFromWeekDay: Number(values.availableFromWeekDay),
+      availableToWeekDay: Number(values.availableToWeekDay),
+      appointmentPriceInCents: values.appointmentPrice * 100,
+    });
   };
 
   return (
@@ -106,7 +128,7 @@ const UpsertDoctorForm = () => {
 
           <FormField
             control={form.control}
-            name="speciality"
+            name="specialty"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Especialidade</FormLabel>
@@ -164,7 +186,7 @@ const UpsertDoctorForm = () => {
                 <FormLabel>Dia inicial de disponibilidade</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value.toString()}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -355,7 +377,9 @@ const UpsertDoctorForm = () => {
           />
 
           <DialogFooter>
-            <Button type="submit">Adicionar</Button>
+            <Button type="submit" disabled={upsertDoctorAction.isPending}>
+              {upsertDoctorAction.isExecuting ? "Adicionando..." : "Adicionar"}
+            </Button>
           </DialogFooter>
         </form>
       </Form>

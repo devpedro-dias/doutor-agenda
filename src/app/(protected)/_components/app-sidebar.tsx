@@ -102,12 +102,12 @@ export const AppSidebar = () => {
                 <SidebarMenuButton size="lg">
                   <Avatar>
                     <AvatarFallback>
-                      {session.data?.user.clinic.name[0]}
-                      {session.data?.user.clinic.name[1]}
+                      {session.data?.user.clinic?.name[0]}
+                      {session.data?.user.clinic?.name[1]}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm">{session.data?.user.clinic.name}</p>
+                    <p className="text-sm">{session.data?.user.clinic?.name}</p>
                     <p className="text-muted-foreground text-sm">
                       {session.data?.user.email}
                     </p>
