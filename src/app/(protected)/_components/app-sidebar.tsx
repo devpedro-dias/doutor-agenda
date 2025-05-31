@@ -9,6 +9,12 @@ import {
 } from "lucide-react";
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/src/_components/ui/dropdown-menu";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -20,17 +26,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/src/_components/ui/sidebar";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/src/_components/ui/dropdown-menu";
-import { Button } from "@/src/_components/ui/button";
 import { authClient } from "@/src/lib/auth-client";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
 
 const items = [
   {
@@ -57,6 +57,8 @@ const items = [
 
 export const AppSidebar = () => {
   const router = useRouter();
+  const session = authClient.useSession();
+
   const handleSignOut = async () => {
     await authClient.signOut({
       fetchOptions: {
@@ -66,6 +68,7 @@ export const AppSidebar = () => {
       },
     });
   };
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
@@ -95,7 +98,20 @@ export const AppSidebar = () => {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button>Clínica</Button>
+                <SidebarMenuButton size="lg">
+                  <Avatar>
+                    <AvatarFallback>
+                      {session.data?.user.clinic.name[0]}
+                      {session.data?.user.clinic.name[1]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm">{session.data?.user.clinic.name}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {session.data?.user.email}
+                    </p>
+                  </div>
+                </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem onClick={handleSignOut}>
