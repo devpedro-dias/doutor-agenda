@@ -29,7 +29,7 @@ import {
 import { authClient } from "@/src/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
 
 const items = [
@@ -56,6 +56,7 @@ const items = [
 ];
 
 export const AppSidebar = () => {
+  const pathname = usePathname();
   const router = useRouter();
   const session = authClient.useSession();
 
@@ -81,7 +82,7 @@ export const AppSidebar = () => {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
