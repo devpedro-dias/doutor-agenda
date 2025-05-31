@@ -120,7 +120,7 @@ const SignupForm = () => {
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Digite seu nome"
+                      placeholder="Digite sua senha"
                       {...field}
                       type="password"
                     />
