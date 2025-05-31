@@ -40,6 +40,7 @@ const loginSchema = z.object({
     message: "Senha deve ter no mínimo 8 caracteres",
   }),
 });
+
 const LoginForm = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
