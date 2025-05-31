@@ -8,9 +8,24 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/src/_components/ui/page-container";
+import { auth } from "@/src/lib/auth";
 import { PlusIcon } from "lucide-react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-const DoctorsPage = () => {
+const DoctorsPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    redirect("/authentication");
+  }
+
+  if (!session?.user.clinic) {
+    redirect("/clinic-form");
+  }
+
   return (
     <PageContainer>
       <PageHeader>
@@ -21,7 +36,7 @@ const DoctorsPage = () => {
         <PageActions>
           <Button>
             <PlusIcon className="mr-2" />
-            Novo Medico
+            Adicionar Médico
           </Button>
         </PageActions>
       </PageHeader>
