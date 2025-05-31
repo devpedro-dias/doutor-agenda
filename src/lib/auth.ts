@@ -9,6 +9,12 @@ export const auth = betterAuth({
     usePlural: true,
     schema: schema,
   }),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
   user: {
     modelName: "usersTable",
   },
