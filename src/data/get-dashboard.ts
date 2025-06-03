@@ -142,5 +142,5 @@ export const getDashboard = async ({ from, to, session }: Params) => {
     topSpecialties,
     todayAppointments,
     dailyAppointmentsData,
-  };Add commentMore actions
+  };mentMore actions
 };

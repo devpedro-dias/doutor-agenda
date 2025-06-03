@@ -94,7 +94,7 @@ export const AppSidebar = () => {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-          <SidebarGroup>Add commentMore actions
+          <SidebarGroup>mentMore actions
           <SidebarGroupLabel>Outros</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
