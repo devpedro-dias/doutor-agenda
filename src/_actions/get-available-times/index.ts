@@ -1,4 +1,4 @@
-"use server";Add commentMore actions
+"use server";
 
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -7,11 +7,11 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
 
-import { db } from "@/db";
-import { appointmentsTable, doctorsTable } from "@/db/schema";
-import { generateTimeSlots } from "@/helpers/time";
-import { auth } from "@/lib/auth";
-import { actionClient } from "@/lib/next-safe-action";
+import { db } from "@/src/db";
+import { appointmentsTable, doctorsTable } from "@/src/db/schema";
+import { generateTimeSlots } from "@/src/_helpers/time";
+import { auth } from "@/src/lib/auth";
+import { actionClient } from "@/src/lib/next-safe-action";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -85,6 +85,6 @@ export const getAvailableTimes = actionClient
         value: time,
         available: !appointmentsOnSelectedDate.includes(time),
         label: time.substring(0, 5),
-      };Add commentMore actions
+      };
     });
   });

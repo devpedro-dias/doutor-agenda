@@ -1,11 +1,10 @@
-
 "use client";
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/src/_components/ui/button";
+import { Dialog, DialogTrigger } from "@/src/_components/ui/dialog";
 import { doctorsTable, patientsTable } from "@/src/db/schema";
 
 import AddAppointmentForm from "./add-appointment-form";
