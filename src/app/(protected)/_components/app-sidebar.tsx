@@ -2,6 +2,8 @@
 
 import {
   CalendarDays,
+  Diamond,
+  Gem,
   LayoutDashboard,
   LogOut,
   Stethoscope,
@@ -92,6 +94,24 @@ export const AppSidebar = () => {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+          <SidebarGroup>Add commentMore actions
+          <SidebarGroupLabel>Outros</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/subscription"}
+                >
+                  <Link href="/subscription">
+                    <Gem />
+                    <span>Assinatura</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
