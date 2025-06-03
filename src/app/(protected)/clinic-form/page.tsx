@@ -1,3 +1,6 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
 import {
   Dialog,
   DialogContent,
@@ -7,7 +10,16 @@ import {
 } from "@/src/_components/ui/dialog";
 import ClinicForm from "./_componets/form";
 
-const ClinicFormPage = () => {
+const ClinicFormPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) {
+    redirect("/login");
+  }
+  if (!session.user.plan) {
+    redirect("/new-subscription");
+  }
   return (
     <div>
       <Dialog open>
