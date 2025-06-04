@@ -1,10 +1,10 @@
-"use server";mentMore actions
+"use server";
 
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
-import { auth } from "@/lib/auth";
-import { actionClient } from "@/lib/next-safe-action";
+import { auth } from "@/src/lib/auth";
+import { actionClient } from "@/src/lib/next-safe-action";
 
 export const createStripeCheckout = actionClient.action(async () => {
   const session = await auth.api.getSession({

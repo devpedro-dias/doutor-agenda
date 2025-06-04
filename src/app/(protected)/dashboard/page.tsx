@@ -2,7 +2,12 @@ import { Calendar } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/_components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/_components/ui/card";
 import { DataTable } from "@/src/_components/ui/data-table";
 import {
   PageActions,
@@ -18,9 +23,11 @@ import { auth } from "@/src/lib/auth";
 
 import AppointmentsChart from "./_components/appointments-chart";
 import { DatePicker } from "./_components/date-picker";
-import StatsCards from "./_components/stats-cards";
 import TopDoctors from "./_components/top-doctors";
 import TopSpecialties from "./_components/top-specialties";
+import StatsCards from "./_components/stats-card";
+import dayjs from "dayjs";
+import { appointmentsTableColumns } from "../appointments/_components/table-columns";
 
 interface DashboardPageProps {
   searchParams: Promise<{

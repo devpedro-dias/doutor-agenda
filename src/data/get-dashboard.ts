@@ -1,8 +1,12 @@
 import dayjs from "dayjs";
 import { and, count, desc, eq, gte, lte, sql, sum } from "drizzle-orm";
 
-import { db } from "@/db";
-import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
+import { db } from "@/src/db";
+import {
+  appointmentsTable,
+  doctorsTable,
+  patientsTable,
+} from "@/src/db/schema";
 
 interface Params {
   from: string;
@@ -142,5 +146,5 @@ export const getDashboard = async ({ from, to, session }: Params) => {
     topSpecialties,
     todayAppointments,
     dailyAppointmentsData,
-  };mentMore actions
+  };
 };
