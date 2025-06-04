@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/src/_components/ui/dialog";
 import ClinicForm from "./_componets/form";
+import { auth } from "@/src/lib/auth";
 
 const ClinicFormPage = async () => {
   const session = await auth.api.getSession({

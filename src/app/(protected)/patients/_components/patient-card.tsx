@@ -3,18 +3,18 @@
 import { Mail, Phone, User } from "lucide-react";
 import { useState } from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
+import { Badge } from "@/src/_components/ui/badge";
+import { Button } from "@/src/_components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "@/components/ui/card";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { patientsTable } from "@/db/schema";
+} from "@/src/_components/ui/card";
+import { Dialog, DialogTrigger } from "@/src/_components/ui/dialog";
+import { Separator } from "@/src/_components/ui/separator";
+import { patientsTable } from "@/src/db/schema";
 
 import UpsertPatientForm from "./upsert-patient-form";
 

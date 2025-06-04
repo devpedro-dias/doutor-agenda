@@ -2,7 +2,6 @@
 
 import {
   CalendarDays,
-  Diamond,
   Gem,
   LayoutDashboard,
   LogOut,
@@ -10,6 +9,7 @@ import {
   UsersRound,
 } from "lucide-react";
 
+import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,6 @@ import { authClient } from "@/src/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Avatar, AvatarFallback } from "@/src/_components/ui/avatar";
 
 const items = [
   {
