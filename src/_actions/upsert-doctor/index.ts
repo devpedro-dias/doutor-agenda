@@ -18,17 +18,15 @@ export const upsertDoctor = actionClient
     const availableFromTime = parsedInput.availableFromTime;
     const availableToTime = parsedInput.availableToTime;
 
-    const availableFromTimeUTC = dayjs()
+    const availableFromTimeFormatted = dayjs()
       .set("hour", parseInt(availableFromTime.split(":")[0]))
       .set("minute", parseInt(availableFromTime.split(":")[1]))
-      .set("second", parseInt(availableFromTime.split(":")[2]))
-      .utc();
+      .set("second", parseInt(availableFromTime.split(":")[2]));
 
-    const availableToTimeUTC = dayjs()
+    const availableToTimeFormatted = dayjs()
       .set("hour", parseInt(availableToTime.split(":")[0]))
       .set("minute", parseInt(availableToTime.split(":")[1]))
-      .set("second", parseInt(availableToTime.split(":")[2]))
-      .utc();
+      .set("second", parseInt(availableToTime.split(":")[2]));
 
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -48,8 +46,8 @@ export const upsertDoctor = actionClient
         ...parsedInput,
         id: parsedInput.id,
         clinicId: session?.user.clinic?.id,
-        availableFromTime: availableFromTimeUTC.format("HH:mm:ss"),
-        availableToTime: availableToTimeUTC.format("HH:mm:ss"),
+        availableFromTime: availableFromTimeFormatted.format("HH:mm:ss"),
+        availableToTime: availableToTimeFormatted.format("HH:mm:ss"),
       })
       .onConflictDoUpdate({
         target: [doctorsTable.id],
