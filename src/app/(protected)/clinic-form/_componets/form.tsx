@@ -16,15 +16,22 @@ import { Input } from "@/src/_components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+interface ClinicFormProps {
+  showCancelButton?: boolean;
+}
 
 const clinicSchema = z.object({
   name: z.string().trim().min(1, { message: "O nome é obrigatório" }),
 });
 
-const ClinicForm = () => {
+const ClinicForm = ({ showCancelButton = false }: ClinicFormProps) => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof clinicSchema>>({
     resolver: zodResolver(clinicSchema),
     defaultValues: {
@@ -41,6 +48,10 @@ const ClinicForm = () => {
       }
       toast.error("Erro ao criar clínica");
     }
+  };
+
+  const handleCancel = () => {
+    router.push("/dashboard");
   };
 
   return (
@@ -60,10 +71,20 @@ const ClinicForm = () => {
               </FormItem>
             )}
           />
-          <DialogFooter>
+          <DialogFooter className={showCancelButton ? "flex gap-2" : ""}>
+            {showCancelButton && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+            )}
             <Button
               type="submit"
-              className="w-full"
+              className={showCancelButton ? "flex-1" : "w-full"}
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting && (

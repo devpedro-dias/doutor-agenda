@@ -21,6 +21,10 @@ const ClinicFormPage = async () => {
   if (!session.user.plan) {
     redirect("/new-subscription");
   }
+
+  // Verificar se o usuário já tem clínicas
+  const hasClinics = session.user.clinics && session.user.clinics.length > 0;
+
   return (
     <div>
       <Dialog open>
@@ -31,7 +35,7 @@ const ClinicFormPage = async () => {
               Adicione uma clínica ao seu perfil para continuar.
             </DialogDescription>
           </DialogHeader>
-          <ClinicForm />
+          <ClinicForm showCancelButton={hasClinics} />
         </DialogContent>
       </Dialog>
     </div>
