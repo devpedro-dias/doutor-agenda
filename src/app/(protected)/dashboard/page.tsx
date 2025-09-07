@@ -1,6 +1,7 @@
+"use client";
+
 import { Calendar } from "lucide-react";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import {
   Card,
@@ -18,16 +19,70 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/src/_components/ui/page-container";
-import { getDashboard } from "@/src/data/get-dashboard";
-import { auth } from "@/src/lib/auth";
+import { getDashboardAction } from "@/src/_actions/get-dashboard";
 
 import AppointmentsChart from "./_components/appointments-chart";
 import { DatePicker } from "./_components/date-picker";
 import TopDoctors from "./_components/top-doctors";
 import TopSpecialties from "./_components/top-specialties";
 import StatsCards from "./_components/stats-card";
+import {
+  AppointmentsChartSkeleton,
+  StatsCardsSkeleton,
+  TodayAppointmentsSkeleton,
+  TopDoctorsSkeleton,
+  TopSpecialtiesSkeleton,
+} from "./_components/dashboard-skeletons";
 import dayjs from "dayjs";
 import { appointmentsTableColumns } from "../appointments/_components/table-columns";
+import { authClient } from "@/src/lib/auth-client";
+
+interface TopDoctor {
+  id: string;
+  name: string;
+  avatarImageUrl: string | null;
+  specialty: string;
+  appointments: number;
+}
+
+interface TopSpecialty {
+  specialty: string;
+  appointments: number;
+}
+
+interface DailyAppointmentData {
+  date: string;
+  appointments: number;
+  revenue: number;
+}
+
+interface AppointmentWithRelations {
+  id: string;
+  date: Date;
+  patient: {
+    id: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+    sex: "male" | "female";
+  };
+  doctor: {
+    id: string;
+    name: string;
+    specialty: string;
+  };
+}
+
+interface DashboardData {
+  totalRevenue: { total: string | null };
+  totalAppointments: { total: number };
+  totalPatients: { total: number };
+  totalDoctors: { total: number };
+  topDoctors: TopDoctor[];
+  topSpecialties: TopSpecialty[];
+  todayAppointments: AppointmentWithRelations[];
+  dailyAppointmentsData: DailyAppointmentData[];
+}
 
 interface DashboardPageProps {
   searchParams: Promise<{
@@ -36,25 +91,88 @@ interface DashboardPageProps {
   }>;
 }
 
-const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    redirect("/authentication");
-  }
-  if (!session.user.clinic) {
-    redirect("/clinic-form");
-  }
-  if (!session.user.plan) {
-    redirect("/new-subscription");
-  }
-  const { from, to } = await searchParams;
-  if (!from || !to) {
-    redirect(
-      `/dashboard?from=${dayjs().format("YYYY-MM-DD")}&to=${dayjs().add(1, "month").format("YYYY-MM-DD")}`,
+const DashboardPage = ({ searchParams }: DashboardPageProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null,
+  );
+  const session = authClient.useSession();
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        setIsLoading(true);
+
+        if (!session.data?.user) {
+          window.location.href = "/authentication";
+          return;
+        }
+
+        if (!session.data.user.clinic) {
+          window.location.href = "/clinic-form";
+          return;
+        }
+
+        if (!session.data.user.plan) {
+          window.location.href = "/new-subscription";
+          return;
+        }
+
+        const params = await searchParams;
+        const { from, to } = params;
+
+        if (!from || !to) {
+          window.location.href = `/dashboard?from=${dayjs().format("YYYY-MM-DD")}&to=${dayjs().add(1, "month").format("YYYY-MM-DD")}`;
+          return;
+        }
+
+        const data = await getDashboardAction({
+          from,
+          to,
+        });
+
+        setDashboardData(data);
+      } catch (error) {
+        console.error("Erro ao carregar dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (session.data) {
+      loadDashboard();
+    }
+  }, [session.data, searchParams]);
+
+  if (isLoading || !dashboardData) {
+    return (
+      <PageContainer>
+        <PageHeader>
+          <PageHeaderContent>
+            <PageTitle>Dashboard</PageTitle>
+            <PageDescription>
+              Tenha uma visão geral da sua clínica.
+            </PageDescription>
+          </PageHeaderContent>
+          <PageActions>
+            <DatePicker />
+          </PageActions>
+        </PageHeader>
+        <PageContent>
+          <StatsCardsSkeleton />
+          <div className="grid grid-cols-[2.25fr_1fr] gap-4">
+            <AppointmentsChartSkeleton />
+            <TopDoctorsSkeleton />
+          </div>
+          <div className="grid grid-cols-[2.25fr_1fr] gap-4">
+            <TodayAppointmentsSkeleton />
+            <TopSpecialtiesSkeleton />
+          </div>
+        </PageContent>
+      </PageContainer>
     );
   }
+
   const {
     totalRevenue,
     totalAppointments,
@@ -64,17 +182,7 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
     topSpecialties,
     todayAppointments,
     dailyAppointmentsData,
-  } = await getDashboard({
-    from,
-    to,
-    session: {
-      user: {
-        clinic: {
-          id: session.user.clinic.id,
-        },
-      },
-    },
-  });
+  } = dashboardData;
 
   return (
     <PageContainer>
@@ -112,7 +220,8 @@ const DashboardPage = async ({ searchParams }: DashboardPageProps) => {
             </CardHeader>
             <CardContent>
               <DataTable
-                columns={appointmentsTableColumns}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                columns={appointmentsTableColumns as any}
                 data={todayAppointments}
               />
             </CardContent>
