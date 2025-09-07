@@ -47,6 +47,8 @@ export const addAppointment = actionClient
       ...parsedInput,
       clinicId: session?.user.clinic?.id,
       date: appointmentDateTime,
+      creationType: "MANUAL",
+      createdByUserId: session.user.id,
     });
 
     revalidatePath("/appointments");

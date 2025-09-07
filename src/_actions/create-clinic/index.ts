@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { db } from "@/src/db";
 import { clinicsTable, usersToClinicsTable } from "@/src/db/schema";
 import { auth } from "@/src/lib/auth";
@@ -25,6 +26,10 @@ export const createClinic = async (name: string) => {
   await db.insert(usersToClinicsTable).values({
     userId: session.user.id,
     clinicId: clinic.id,
+    role: "OWNER",
   });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/clinic-form");
   redirect("/dashboard");
 };
