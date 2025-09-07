@@ -10,6 +10,18 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+export const userRoleEnum = pgEnum("user_role", [
+  "OWNER",
+  "MANAGER",
+  "STAFF",
+  "DOCTOR",
+]);
+
+export const appointmentCreationTypeEnum = pgEnum("appointment_creation_type", [
+  "MANUAL",
+  "AUTOMATION",
+]);
+
 export const usersTable = pgTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -83,6 +95,7 @@ export const usersToClinicsTable = pgTable("users_to_clinics", {
   clinicId: uuid("clinic_id")
     .notNull()
     .references(() => clinicsTable.id, { onDelete: "cascade" }),
+  role: userRoleEnum("role").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -112,6 +125,9 @@ export const clinicsTableRelations = relations(clinicsTable, ({ many }) => ({
 
 export const doctorsTable = pgTable("doctors", {
   id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "set null",
+  }),
   clinicId: uuid("clinic_id")
     .notNull()
     .references(() => clinicsTable.id, { onDelete: "cascade" }),
@@ -133,11 +149,22 @@ export const doctorsTable = pgTable("doctors", {
 export const doctorsTableRelations = relations(
   doctorsTable,
   ({ many, one }) => ({
+    user: one(usersTable, {
+      fields: [doctorsTable.userId],
+      references: [usersTable.id],
+      relationName: "doctor_user",
+    }),
     clinic: one(clinicsTable, {
       fields: [doctorsTable.clinicId],
       references: [clinicsTable.id],
+      relationName: "doctor_clinic",
     }),
-    appointments: many(appointmentsTable),
+    appointments: many(appointmentsTable, {
+      relationName: "appointment_doctor",
+    }),
+    createdAppointments: many(appointmentsTable, {
+      relationName: "appointment_created_by_doctor",
+    }),
   }),
 );
 
@@ -182,6 +209,17 @@ export const appointmentsTable = pgTable("appointments", {
   doctorId: uuid("doctor_id")
     .notNull()
     .references(() => doctorsTable.id, { onDelete: "cascade" }),
+  // Quem criou o agendamento
+  createdByUserId: text("created_by_user_id").references(() => usersTable.id, {
+    onDelete: "set null",
+  }),
+  createdByDoctorId: uuid("created_by_doctor_id").references(
+    () => doctorsTable.id,
+    {
+      onDelete: "set null",
+    },
+  ),
+  creationType: appointmentCreationTypeEnum("creation_type").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -202,6 +240,17 @@ export const appointmentsTableRelations = relations(
     doctor: one(doctorsTable, {
       fields: [appointmentsTable.doctorId],
       references: [doctorsTable.id],
+      relationName: "appointment_doctor",
+    }),
+    createdByUser: one(usersTable, {
+      fields: [appointmentsTable.createdByUserId],
+      references: [usersTable.id],
+      relationName: "appointment_created_by_user",
+    }),
+    createdByDoctor: one(doctorsTable, {
+      fields: [appointmentsTable.createdByDoctorId],
+      references: [doctorsTable.id],
+      relationName: "appointment_created_by_doctor",
     }),
   }),
 );
