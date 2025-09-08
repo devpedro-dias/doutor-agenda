@@ -13,7 +13,11 @@ import {
   PageTitle,
 } from "@/src/_components/ui/page-container";
 import { db } from "@/src/db";
-import { appointmentsTable, doctorsTable, patientsTable } from "@/src/db/schema";
+import {
+  appointmentsTable,
+  doctorsTable,
+  patientsTable,
+} from "@/src/db/schema";
 import { auth } from "@/src/lib/auth";
 
 import AddAppointmentButton from "./_components/add-appointment-button";
@@ -44,7 +48,11 @@ const AppointmentsPage = async () => {
       where: eq(appointmentsTable.clinicId, session.user.clinic.id),
       with: {
         patient: true,
-        doctor: true,
+        doctor: {
+          with: {
+            specialty: true,
+          },
+        },
       },
     }),
   ]);

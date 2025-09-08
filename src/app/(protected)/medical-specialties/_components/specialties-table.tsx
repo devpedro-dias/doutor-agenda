@@ -35,8 +35,6 @@ interface SpecialtiesTableProps {
   isLoading: boolean;
 }
 
-
-
 export function SpecialtiesTable({
   specialties,
   isLoading,

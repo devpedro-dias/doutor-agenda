@@ -24,6 +24,18 @@ import { Dialog, DialogTrigger } from "@/src/_components/ui/dialog";
 import { Separator } from "@/src/_components/ui/separator";
 import { formatCurrencyInCents } from "@/src/_helpers/currency";
 import { doctorsTable } from "@/src/db/schema";
+
+type DoctorWithSpecialty = typeof doctorsTable.$inferSelect & {
+  specialty: {
+    id: string;
+    name: string;
+    description: string | null;
+    clinicId: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+};
 import {
   CalendarIcon,
   ClockIcon,
@@ -38,7 +50,7 @@ import { deleteDoctor } from "@/src/_actions/delete-doctor";
 import { toast } from "sonner";
 
 interface DoctorCardProps {
-  doctor: typeof doctorsTable.$inferSelect;
+  doctor: DoctorWithSpecialty;
   onSuccess?: () => void;
 }
 const DoctorCard = ({ doctor }: DoctorCardProps) => {
@@ -75,7 +87,9 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
         </Avatar>
         <div>
           <h3 className="text-sm font-medium">{doctor.name}</h3>
-          <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
+          <p className="text-muted-foreground text-sm">
+            {doctor.specialty.name}
+          </p>
         </div>
       </CardHeader>
       <Separator />

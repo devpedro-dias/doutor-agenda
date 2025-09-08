@@ -220,7 +220,7 @@ const AddAppointmentForm = ({
                   <SelectContent>
                     {doctors.map((doctor) => (
                       <SelectItem key={doctor.id} value={doctor.id}>
-                        {doctor.name} - {doctor.specialty}
+                        {doctor.name} - {doctor.specialtyId}
                       </SelectItem>
                     ))}
                   </SelectContent>

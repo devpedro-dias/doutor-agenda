@@ -58,6 +58,12 @@ const items = [
     icon: UsersRound,
     ownerOnly: true,
   },
+  {
+    title: "Especialidades",
+    url: "/medical-specialties",
+    icon: Stethoscope,
+    ownerOnly: true,
+  },
 ];
 
 export const AppSidebar = () => {

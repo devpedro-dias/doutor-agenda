@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/src/db";
-import { doctorsTable } from "@/src/db/schema";
+import { doctorsTable, medicalSpecialtiesTable } from "@/src/db/schema";
 import { auth } from "@/src/lib/auth";
 import { actionClient } from "@/src/lib/next-safe-action";
 import { headers } from "next/headers";
@@ -9,6 +9,7 @@ import { upsertDoctorSchema } from "./schema";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
 dayjs.extend(utc);
 
@@ -40,20 +41,43 @@ export const upsertDoctor = actionClient
       throw new Error("Clinic not found");
     }
 
+    // Buscar specialtyId pelo nome da especialidade
+    const specialty = await db
+      .select({ id: medicalSpecialtiesTable.id })
+      .from(medicalSpecialtiesTable)
+      .where(eq(medicalSpecialtiesTable.name, parsedInput.specialty))
+      .limit(1);
+
+    if (specialty.length === 0) {
+      throw new Error("Especialidade não encontrada");
+    }
+
+    const specialtyId = specialty[0].id;
+
     await db
       .insert(doctorsTable)
       .values({
-        ...parsedInput,
-        id: parsedInput.id,
+        name: parsedInput.name,
         clinicId: session?.user.clinic?.id,
         availableFromTime: availableFromTimeFormatted.format("HH:mm:ss"),
         availableToTime: availableToTimeFormatted.format("HH:mm:ss"),
+        availableFromWeekDay: parsedInput.availableFromWeekDay,
+        availableToWeekDay: parsedInput.availableToWeekDay,
+        specialtyId,
+        appointmentPriceInCents: parsedInput.appointmentPriceInCents,
       })
       .onConflictDoUpdate({
         target: [doctorsTable.id],
         set: {
-          ...parsedInput,
+          name: parsedInput.name,
+          availableFromTime: availableFromTimeFormatted.format("HH:mm:ss"),
+          availableToTime: availableToTimeFormatted.format("HH:mm:ss"),
+          availableFromWeekDay: parsedInput.availableFromWeekDay,
+          availableToWeekDay: parsedInput.availableToWeekDay,
+          specialtyId,
+          appointmentPriceInCents: parsedInput.appointmentPriceInCents,
         },
       });
+
     revalidatePath("/doctors");
   });

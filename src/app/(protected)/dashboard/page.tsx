@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar } from "lucide-react";
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 
 import {
@@ -34,6 +35,7 @@ import {
   TopSpecialtiesSkeleton,
 } from "./_components/dashboard-skeletons";
 import dayjs from "dayjs";
+import { useSearchParams } from "next/navigation";
 import { appointmentsTableColumns } from "../appointments/_components/table-columns";
 import { authClient } from "@/src/lib/auth-client";
 
@@ -69,7 +71,15 @@ interface AppointmentWithRelations {
   doctor: {
     id: string;
     name: string;
-    specialty: string;
+    specialty: {
+      id: string;
+      name: string;
+      description: string | null;
+      clinicId: string;
+      isActive: boolean;
+      createdAt: Date;
+      updatedAt: Date;
+    };
   };
 }
 
@@ -84,14 +94,8 @@ interface DashboardData {
   dailyAppointmentsData: DailyAppointmentData[];
 }
 
-interface DashboardPageProps {
-  searchParams: Promise<{
-    from: string;
-    to: string;
-  }>;
-}
-
-const DashboardPage = ({ searchParams }: DashboardPageProps) => {
+const DashboardContent = () => {
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null,
@@ -118,8 +122,8 @@ const DashboardPage = ({ searchParams }: DashboardPageProps) => {
           return;
         }
 
-        const params = await searchParams;
-        const { from, to } = params;
+        const from = searchParams.get("from");
+        const to = searchParams.get("to");
 
         if (!from || !to) {
           window.location.href = `/dashboard?from=${dayjs().format("YYYY-MM-DD")}&to=${dayjs().add(1, "month").format("YYYY-MM-DD")}`;
@@ -230,6 +234,14 @@ const DashboardPage = ({ searchParams }: DashboardPageProps) => {
         </div>
       </PageContent>
     </PageContainer>
+  );
+};
+
+const DashboardPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 };
 

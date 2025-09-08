@@ -148,7 +148,9 @@ export const doctorsTable = pgTable("doctors", {
   availableToWeekDay: integer("available_to_week_day").notNull(),
   availableFromTime: time("available_from_time").notNull(),
   availableToTime: time("available_to_time").notNull(),
-  specialty: text("specialty").notNull(),
+  specialtyId: uuid("specialty_id")
+    .notNull()
+    .references(() => medicalSpecialtiesTable.id, { onDelete: "restrict" }),
   appointmentPriceInCents: integer("appointment_price_in_cents").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -168,6 +170,11 @@ export const doctorsTableRelations = relations(
       fields: [doctorsTable.clinicId],
       references: [clinicsTable.id],
       relationName: "doctor_clinic",
+    }),
+    specialty: one(medicalSpecialtiesTable, {
+      fields: [doctorsTable.specialtyId],
+      references: [medicalSpecialtiesTable.id],
+      relationName: "doctor_specialty",
     }),
     appointments: many(appointmentsTable, {
       relationName: "appointment_doctor",
@@ -203,6 +210,30 @@ export const patientsTableRelations = relations(
       references: [clinicsTable.id],
     }),
     appointments: many(appointmentsTable),
+  }),
+);
+
+export const medicalSpecialtiesTable = pgTable("medical_specialties", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  clinicId: uuid("clinic_id")
+    .notNull()
+    .references(() => clinicsTable.id, { onDelete: "cascade" }),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Relações para especialidades médicas
+export const medicalSpecialtiesRelations = relations(
+  medicalSpecialtiesTable,
+  ({ one, many }) => ({
+    clinic: one(clinicsTable, {
+      fields: [medicalSpecialtiesTable.clinicId],
+      references: [clinicsTable.id],
+    }),
+    doctors: many(doctorsTable),
   }),
 );
 

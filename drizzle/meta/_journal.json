@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1757283429844,
+      "tag": "0000_worthless_sleepwalker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757298170605,
+      "tag": "0001_neat_wither",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757298324189,
+      "tag": "0002_workable_caretaker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757299118559,
+      "tag": "0003_lively_rattler",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1757304015840,
+      "tag": "0004_orange_dexter_bennett",
+      "breakpoints": true
+    }
+  ]
+}

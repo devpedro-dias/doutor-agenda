@@ -5,6 +5,7 @@ import { db } from "@/src/db";
 import {
   appointmentsTable,
   doctorsTable,
+  medicalSpecialtiesTable,
   patientsTable,
 } from "@/src/db/schema";
 
@@ -74,7 +75,7 @@ export const getDashboard = async ({ from, to, session }: Params) => {
         id: doctorsTable.id,
         name: doctorsTable.name,
         avatarImageUrl: doctorsTable.avatarImageUrl,
-        specialty: doctorsTable.specialty,
+        specialty: medicalSpecialtiesTable.name,
         appointments: count(appointmentsTable.id),
       })
       .from(doctorsTable)
@@ -86,17 +87,25 @@ export const getDashboard = async ({ from, to, session }: Params) => {
           lte(appointmentsTable.date, new Date(to)),
         ),
       )
+      .innerJoin(
+        medicalSpecialtiesTable,
+        eq(doctorsTable.specialtyId, medicalSpecialtiesTable.id),
+      )
       .where(eq(doctorsTable.clinicId, session.user.clinic.id))
-      .groupBy(doctorsTable.id)
+      .groupBy(doctorsTable.id, medicalSpecialtiesTable.name)
       .orderBy(desc(count(appointmentsTable.id)))
       .limit(10),
     db
       .select({
-        specialty: doctorsTable.specialty,
+        specialty: medicalSpecialtiesTable.name,
         appointments: count(appointmentsTable.id),
       })
       .from(appointmentsTable)
       .innerJoin(doctorsTable, eq(appointmentsTable.doctorId, doctorsTable.id))
+      .innerJoin(
+        medicalSpecialtiesTable,
+        eq(doctorsTable.specialtyId, medicalSpecialtiesTable.id),
+      )
       .where(
         and(
           eq(appointmentsTable.clinicId, session.user.clinic.id),
@@ -104,7 +113,7 @@ export const getDashboard = async ({ from, to, session }: Params) => {
           lte(appointmentsTable.date, new Date(to)),
         ),
       )
-      .groupBy(doctorsTable.specialty)
+      .groupBy(medicalSpecialtiesTable.name)
       .orderBy(desc(count(appointmentsTable.id))),
     db.query.appointmentsTable.findMany({
       where: and(
@@ -114,7 +123,11 @@ export const getDashboard = async ({ from, to, session }: Params) => {
       ),
       with: {
         patient: true,
-        doctor: true,
+        doctor: {
+          with: {
+            specialty: true,
+          },
+        },
       },
     }),
     db

@@ -31,12 +31,12 @@ import {
 import { doctorsTable } from "@/src/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
-import { medicalSpecialties } from "../_constants";
+import { getMedicalSpecialtiesAction } from "@/src/_actions/medical-specialties";
 
 const formSchema = z
   .object({
@@ -80,11 +80,16 @@ const UpsertDoctorForm = ({
   onSuccess,
   isOpen,
 }: UpsertDoctorFormProps) => {
+  const [specialties, setSpecialties] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [isLoadingSpecialties, setIsLoadingSpecialties] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: doctor?.name ?? "",
-      specialty: doctor?.specialty ?? "",
+      specialty: "",
       appointmentPrice: doctor?.appointmentPriceInCents
         ? doctor.appointmentPriceInCents / 100
         : 0,
@@ -96,11 +101,38 @@ const UpsertDoctorForm = ({
     shouldUnregister: true,
   });
 
+  // Buscar especialidades quando o componente montar
+  useEffect(() => {
+    const loadSpecialties = async () => {
+      setIsLoadingSpecialties(true);
+      try {
+        const specialtiesData = await getMedicalSpecialtiesAction();
+        setSpecialties(
+          specialtiesData.map((s) => ({ id: s.id, name: s.name })),
+        );
+      } catch (error) {
+        console.error("Erro ao carregar especialidades:", error);
+        toast.error("Erro ao carregar especialidades");
+      } finally {
+        setIsLoadingSpecialties(false);
+      }
+    };
+
+    if (isOpen) {
+      loadSpecialties();
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (isOpen) {
+      // Encontrar o nome da especialidade pelo specialtyId quando o doctor já tem um
+      const specialtyName = doctor?.specialtyId
+        ? specialties.find((s) => s.id === doctor.specialtyId)?.name || ""
+        : "";
+
       form.reset({
         name: doctor?.name ?? "",
-        specialty: doctor?.specialty ?? "",
+        specialty: specialtyName,
         appointmentPrice: doctor?.appointmentPriceInCents
           ? doctor.appointmentPriceInCents / 100
           : 0,
@@ -110,7 +142,7 @@ const UpsertDoctorForm = ({
         availableToTime: doctor?.availableToTime ?? "",
       });
     }
-  }, [isOpen, form, doctor]);
+  }, [isOpen, form, doctor, specialties]);
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
@@ -165,18 +197,35 @@ const UpsertDoctorForm = ({
               <FormItem>
                 <FormLabel required>Especialidade</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => {
+                    // Encontrar o nome da especialidade pelo ID selecionado
+                    const selectedSpecialty = specialties.find(
+                      (s) => s.id === value,
+                    );
+                    field.onChange(selectedSpecialty?.name || value);
+                  }}
+                  value={
+                    field.value
+                      ? specialties.find((s) => s.name === field.value)?.id
+                      : ""
+                  }
+                  disabled={isLoadingSpecialties}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Selecione a especialidade" />
+                      <SelectValue
+                        placeholder={
+                          isLoadingSpecialties
+                            ? "Carregando especialidades..."
+                            : "Selecione a especialidade"
+                        }
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {medicalSpecialties.map((specialty) => (
-                      <SelectItem key={specialty.value} value={specialty.value}>
-                        {specialty.label}
+                    {specialties.map((specialty) => (
+                      <SelectItem key={specialty.id} value={specialty.id}>
+                        {specialty.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
