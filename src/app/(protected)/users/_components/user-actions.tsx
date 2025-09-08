@@ -21,8 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/_components/ui/dropdown-menu";
 
@@ -43,11 +41,11 @@ interface UserActionsProps {
 const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
   const deleteUserAction = useAction(deleteUser, {
     onSuccess: () => {
-      toast.success("Usuário deletado com sucesso.");
+      toast.success("Usuário removido com sucesso.");
       onDelete();
     },
     onError: () => {
-      toast.error("Erro ao deletar usuário.");
+      toast.error("Erro ao remover usuário.");
     },
   });
 
@@ -68,37 +66,39 @@ const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* Sempre mostrar editar, mas role será readonly para OWNER */}
         <DropdownMenuItem onClick={() => onEdit(user)}>
-          <EditIcon className="mr-2 h-4 w-4" />
+          <EditIcon />
           Editar
         </DropdownMenuItem>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <TrashIcon className="mr-2 h-4 w-4" />
-              Excluir
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Tem certeza que deseja deletar este usuário?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                Essa ação não pode ser revertida. Isso irá remover o usuário
-                "{user.name}" da clínica permanentemente.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteUserClick}>
-                Deletar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {/* Não permitir excluir OWNER */}
+        {user.role !== "OWNER" && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <TrashIcon />
+                Excluir
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Tem certeza que deseja deletar este usuário?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação não pode ser revertida. Isso irá deletar o usuário
+                  permanentemente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteUserClick}>
+                  Deletar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

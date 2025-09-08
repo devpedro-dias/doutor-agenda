@@ -33,10 +33,11 @@ import { Input } from "@/src/_components/ui/input";
 import { Button } from "@/src/_components/ui/button";
 import { updateUser } from "@/src/_actions/update-user";
 import { toast } from "sonner";
+import { authClient } from "@/src/lib/auth-client";
 
 const updateUserSchema = z.object({
   name: z.string().trim().min(1, { message: "O nome é obrigatório" }),
-  role: z.enum(["MANAGER", "DOCTOR", "STAFF"], {
+  role: z.enum(["OWNER", "MANAGER", "DOCTOR", "STAFF"], {
     required_error: "Selecione uma função",
   }),
 });
@@ -64,6 +65,27 @@ export const EditUserDialog = ({
   onUserUpdated,
 }: EditUserDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const session = authClient.useSession();
+
+  // Verificar se o usuário atual é OWNER na clínica atual
+  const currentUserClinicRole = session.data?.user.clinics?.find(
+    (clinic) => clinic.id === session.data?.user.clinic?.id,
+  )?.role;
+
+  const isCurrentUserOwner = currentUserClinicRole === "OWNER";
+
+  // Verificar se o usuário sendo editado é OWNER
+  const isEditingOwner = user?.role === "OWNER";
+
+  // Reset form when user changes
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name,
+        role: user.role as "OWNER" | "MANAGER" | "DOCTOR" | "STAFF",
+      });
+    }
+  }, [user]);
 
   const form = useForm<UpdateUserForm>({
     resolver: zodResolver(updateUserSchema),
@@ -72,16 +94,6 @@ export const EditUserDialog = ({
       role: undefined,
     },
   });
-
-  // Reset form when user changes
-  useEffect(() => {
-    if (user) {
-      form.reset({
-        name: user.name,
-        role: user.role as "MANAGER" | "DOCTOR" | "STAFF",
-      });
-    }
-  }, [user, form]);
 
   const onSubmit = async (data: UpdateUserForm) => {
     if (!user) return;
@@ -113,7 +125,7 @@ export const EditUserDialog = ({
         <DialogHeader>
           <DialogTitle>Editar Usuário</DialogTitle>
           <DialogDescription>
-            Atualize as informações do usuário "{user.name}".
+            Atualize as informações do usuário &quot;{user.name}&quot;.
           </DialogDescription>
         </DialogHeader>
 
@@ -139,18 +151,30 @@ export const EditUserDialog = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Função</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isEditingOwner}
+                  >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione uma função" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      {isCurrentUserOwner && (
+                        <SelectItem value="OWNER">Proprietário</SelectItem>
+                      )}
                       <SelectItem value="MANAGER">Gerente</SelectItem>
                       <SelectItem value="DOCTOR">Médico</SelectItem>
                       <SelectItem value="STAFF">Funcionário</SelectItem>
                     </SelectContent>
                   </Select>
+                  {isEditingOwner && (
+                    <p className="text-muted-foreground text-end text-xs">
+                      Não é possível alterar a função desse usuário.
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

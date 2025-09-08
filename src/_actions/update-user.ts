@@ -3,13 +3,13 @@
 import { auth } from "@/src/lib/auth";
 import { db } from "@/src/db";
 import { usersTable, usersToClinicsTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
 
 interface UpdateUserData {
   userId: string;
   name: string;
-  role: "MANAGER" | "DOCTOR" | "STAFF";
+  role: "OWNER" | "MANAGER" | "DOCTOR" | "STAFF";
 }
 
 export const updateUser = async (data: UpdateUserData) => {
@@ -34,7 +34,17 @@ export const updateUser = async (data: UpdateUserData) => {
     throw new Error("Only clinic owners and managers can update users");
   }
 
-  // Não permitir editar OWNER se não for OWNER
+  // Verificar se o usuário a ser editado é OWNER
+  const targetUserRole = session.user.clinics?.find(
+    (clinic) => clinic.id === session.user.clinic?.id,
+  )?.role;
+
+  // Se for OWNER, apenas permitir editar o nome, não a role
+  if (targetUserRole === "OWNER" && data.role !== "OWNER") {
+    throw new Error("Cannot change owner role");
+  }
+
+  // Não permitir promover para OWNER se não for OWNER
   if (userRole === "MANAGER" && data.role === "OWNER") {
     throw new Error("Managers cannot promote users to owner");
   }
@@ -50,9 +60,9 @@ export const updateUser = async (data: UpdateUserData) => {
     .update(usersToClinicsTable)
     .set({ role: data.role })
     .where(
-      eq(usersToClinicsTable.userId, data.userId)
-    )
-    .where(
-      eq(usersToClinicsTable.clinicId, session.user.clinic.id)
+      and(
+        eq(usersToClinicsTable.userId, data.userId),
+        eq(usersToClinicsTable.clinicId, session.user.clinic.id),
+      ),
     );
 };
