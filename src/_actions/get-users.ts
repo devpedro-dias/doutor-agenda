@@ -25,6 +25,16 @@ export const getUsersAction = async () => {
       id: usersTable.id,
       name: usersTable.name,
       email: usersTable.email,
+      cpf: usersTable.cpf,
+      phoneNumber: usersTable.phoneNumber,
+      cep: usersTable.cep,
+      street: usersTable.street,
+      number: usersTable.number,
+      complement: usersTable.complement,
+      neighborhood: usersTable.neighborhood,
+      city: usersTable.city,
+      state: usersTable.state,
+      address: usersTable.address,
       role: usersToClinicsTable.role,
     })
     .from(usersToClinicsTable)

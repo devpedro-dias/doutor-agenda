@@ -39,12 +39,19 @@ export const deleteUser = actionClient
     }
 
     // Verificar se o usuário a ser deletado é OWNER
-    const targetUserRole = session.user.clinics?.find(
-      (clinic) => clinic.id === session.user.clinic?.id,
-    )?.role;
+    const targetUserRole = await db
+      .select({ role: usersToClinicsTable.role })
+      .from(usersToClinicsTable)
+      .where(
+        and(
+          eq(usersToClinicsTable.userId, parsedInput.userId),
+          eq(usersToClinicsTable.clinicId, session.user.clinic.id),
+        ),
+      )
+      .limit(1);
 
     // NÃO permitir excluir OWNER
-    if (targetUserRole === "OWNER") {
+    if (targetUserRole[0]?.role === "OWNER") {
       throw new Error("Cannot delete clinic owner");
     }
 

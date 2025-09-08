@@ -44,8 +44,21 @@ const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
       toast.success("Usuário removido com sucesso.");
       onDelete();
     },
-    onError: () => {
-      toast.error("Erro ao remover usuário.");
+    onError: (error) => {
+      // Tratamento específico de erros
+      if (error.error?.serverError) {
+        if (error.error.serverError.includes("Cannot delete clinic owner")) {
+          toast.error("Não é possível excluir o proprietário da clínica.");
+        } else if (error.error.serverError.includes("Only clinic owners")) {
+          toast.error(
+            "Apenas proprietários e gerentes podem excluir usuários.",
+          );
+        } else {
+          toast.error(error.error.serverError);
+        }
+      } else {
+        toast.error("Erro ao remover usuário.");
+      }
     },
   });
 
@@ -60,7 +73,7 @@ const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <MoreVerticalIcon className="h-4 w-4" />
         </Button>

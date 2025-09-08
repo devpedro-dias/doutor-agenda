@@ -5,6 +5,7 @@ import { db } from "@/src/db";
 import { usersTable, usersToClinicsTable } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 interface CreateUserData {
   name: string;
@@ -68,7 +69,8 @@ export const createUserAction = async (data: CreateUserData) => {
     // Por enquanto, apenas usuários existentes podem ser associados
     // Em produção, implementar sistema de convite por email
     throw new Error(
-      "User creation not implemented. Please use existing users.",
+      "Usuário não encontrado. Apenas usuários existentes podem ser associados à clínica.",
     );
   }
+  revalidatePath("/users");
 };

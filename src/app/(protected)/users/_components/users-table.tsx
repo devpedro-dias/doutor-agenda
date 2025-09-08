@@ -4,20 +4,54 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/src/_components/ui/badge";
 import { DataTable } from "@/src/_components/ui/data-table";
 import UserActions from "./user-actions";
+import UpsertUserForm from "./upsert-user-form";
+import { useState } from "react";
+import { Dialog } from "@/src/_components/ui/dialog";
+
+const formatCPF = (cpf: string | null): string => {
+  if (!cpf) return "-";
+
+  const cleanCPF = cpf.replace(/\D/g, "");
+  if (cleanCPF.length !== 11) return cpf;
+
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+};
+
+const formatPhone = (phone: string | null): string => {
+  if (!phone) return "-";
+
+  const cleanPhone = phone.replace(/\D/g, "");
+  if (cleanPhone.length < 10 || cleanPhone.length > 11) return phone;
+
+  if (cleanPhone.length === 11) {
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  }
+
+  return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+};
 
 interface User {
   id: string;
   name: string;
   email: string;
+  cpf?: string | null;
+  phoneNumber?: string | null;
+  cep?: string | null;
+  street?: string | null;
+  number?: string | null;
+  complement?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?: string | null;
+  address?: string | null;
   role: string;
 }
 
 interface UsersTableProps {
   users: User[];
   isLoading: boolean;
-  onEditUser: (user: User) => void;
-  onDeleteUser: () => void;
   canEdit: boolean;
+  onUsersChange?: () => void;
 }
 
 const columns = (
@@ -28,16 +62,44 @@ const columns = (
   {
     accessorKey: "name",
     header: "Nome",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("name")}</div>
-    ),
+    cell: ({ row }) => <div className="text-sm">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("email")}</div>
+      <div className="text-foreground">{row.getValue("email")}</div>
     ),
+  },
+  {
+    accessorKey: "cpf",
+    header: "CPF",
+    cell: ({ row }) => {
+      const cpf = row.getValue("cpf") as string | null;
+      const formattedCPF = formatCPF(cpf);
+      return (
+        <div
+          className={`text-sm ${cpf ? "text-foreground" : "text-muted-foreground"}`}
+        >
+          {formattedCPF}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "phoneNumber",
+    header: "Telefone",
+    cell: ({ row }) => {
+      const phone = row.getValue("phoneNumber") as string | null;
+      const formattedPhone = formatPhone(phone);
+      return (
+        <div
+          className={`text-sm ${phone ? "text-foreground" : "text-muted-foreground"}`}
+        >
+          {formattedPhone}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "role",
@@ -83,10 +145,24 @@ const columns = (
 export const UsersTable = ({
   users,
   isLoading,
-  onEditUser,
-  onDeleteUser,
   canEdit,
+  onUsersChange,
 }: UsersTableProps) => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteUser = () => {
+    // Recarregar usuários após exclusão
+    if (onUsersChange) {
+      onUsersChange();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -118,9 +194,23 @@ export const UsersTable = ({
   }
 
   return (
-    <DataTable
-      columns={columns(onEditUser, onDeleteUser, canEdit)}
-      data={users}
-    />
+    <>
+      <DataTable
+        columns={columns(handleEditUser, handleDeleteUser, canEdit)}
+        data={users}
+      />
+
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <UpsertUserForm
+          user={selectedUser}
+          isOpen={isEditDialogOpen}
+          onSuccess={() => {
+            setIsEditDialogOpen(false);
+            setSelectedUser(null);
+          }}
+          onUsersChange={onUsersChange}
+        />
+      </Dialog>
+    </>
   );
 };
