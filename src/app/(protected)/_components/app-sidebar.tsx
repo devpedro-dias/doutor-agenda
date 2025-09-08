@@ -115,7 +115,7 @@ export const AppSidebar = () => {
 
       {/* Company Header - Clínica Atual */}
       <div className="border-sidebar-border flex items-center gap-3 border-b p-4">
-        {isOwnerOrManager && userClinics.length > 1 ? (
+        {isOwnerOrManager ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex h-auto w-full cursor-pointer items-center gap-3 rounded-md p-0">
