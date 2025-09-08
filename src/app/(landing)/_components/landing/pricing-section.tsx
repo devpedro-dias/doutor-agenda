@@ -22,7 +22,7 @@ export function PricingSection() {
 
         <div className="grid gap-8 md:grid-cols-3">
           {/* Plano Básico */}
-          <Card className="border-2">
+          <Card className="flex min-h-[500px] flex-col border-2">
             <CardHeader>
               <CardTitle className="text-center">Básico</CardTitle>
               <div className="text-center">
@@ -30,27 +30,27 @@ export function PricingSection() {
                 <span className="text-muted-foreground">/mês</span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+            <CardContent className="flex flex-1 flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Até 500 agendamentos/mês</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Lembretes automáticos</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>1 médico</span>
                 </div>
               </div>
-              <Button className="w-full">Começar teste grátis</Button>
+              <Button className="mt-6 w-full">Começar teste grátis</Button>
             </CardContent>
           </Card>
 
           {/* Plano Profissional */}
-          <Card className="border-primary relative border-2">
+          <Card className="border-primary relative flex min-h-[500px] flex-col border-2">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
               <span className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-sm font-semibold">
                 Mais Popular
@@ -63,60 +63,60 @@ export function PricingSection() {
                 <span className="text-muted-foreground">/mês</span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+            <CardContent className="flex flex-1 flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Até 2000 agendamentos/mês</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Até 5 médicos</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Relatórios avançados</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Suporte prioritário</span>
                 </div>
               </div>
-              <Button className="bg-primary hover:bg-primary/90 w-full">
+              <Button className="bg-primary hover:bg-primary/90 mt-6 w-full">
                 Começar teste grátis
               </Button>
             </CardContent>
           </Card>
 
           {/* Plano Empresarial */}
-          <Card className="border-2">
+          <Card className="flex min-h-[500px] flex-col border-2">
             <CardHeader>
               <CardTitle className="text-center">Empresarial</CardTitle>
               <div className="text-center">
-                <span className="text-3xl font-bold">R$ 399</span>
+                <span className="text-3xl font-bold">A combinar</span>
                 <span className="text-muted-foreground">/mês</span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+            <CardContent className="flex flex-1 flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Agendamentos ilimitados</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Médicos ilimitados</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>API completa</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Check className="text-primary h-4 w-4" />
+                <div className="flex items-center space-x-3">
+                  <Check className="text-primary h-5 w-5 flex-shrink-0" />
                   <span>Consultoria especializada</span>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="mt-6 w-full">
                 Falar com vendas
               </Button>
             </CardContent>

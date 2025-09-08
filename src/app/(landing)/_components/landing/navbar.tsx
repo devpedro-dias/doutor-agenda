@@ -50,8 +50,8 @@ export function Navbar() {
             >
               <Link href="/authentication">Já sou cliente</Link>
             </Button>
-            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow">
-              Começar
+            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow" asChild>
+              <Link href="#planos">Começar</Link>
             </Button>
           </div>
 
