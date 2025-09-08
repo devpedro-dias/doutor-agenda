@@ -1,9 +1,10 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+
 import { auth } from "@/src/lib/auth";
 import { db } from "@/src/db";
 import { usersTable, usersToClinicsTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 export const getUsersAction = async () => {

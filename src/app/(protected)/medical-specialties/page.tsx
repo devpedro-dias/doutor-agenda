@@ -64,18 +64,8 @@ export const metadata = {
   description: "Gerencie as especialidades médicas da sua clínica",
 };
 
-async function getMedicalSpecialties() {
-  try {
-    const specialties = await getMedicalSpecialtiesAction();
-    return specialties;
-  } catch (error) {
-    console.error("Erro ao buscar especialidades:", error);
-    return [];
-  }
-}
-
 export default async function MedicalSpecialtiesPage() {
-  const specialties = await getMedicalSpecialties();
+  const specialties = await getMedicalSpecialtiesAction();
 
   return (
     <PageContainer>

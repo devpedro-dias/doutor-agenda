@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -11,12 +10,11 @@ import {
   PageHeaderContent,
   PageTitle,
 } from "@/src/_components/ui/page-container";
-import { db } from "@/src/db";
-import { usersTable, usersToClinicsTable } from "@/src/db/schema";
 import { auth } from "@/src/lib/auth";
 
 import AddUserButton from "./_components/add-user-button";
 import UsersTableClient from "./_components/users-table-client";
+import { getUsersAction } from "@/src/_actions/get-users";
 
 const UsersPage = async () => {
   const session = await auth.api.getSession({
@@ -38,20 +36,8 @@ const UsersPage = async () => {
 
   const canAddUsers = userRole === "OWNER" || userRole === "MANAGER";
 
-  // Buscar usuários da clínica
-  const clinicUsers = await db
-    .select({
-      id: usersTable.id,
-      name: usersTable.name,
-      email: usersTable.email,
-      cpf: usersTable.cpf,
-      phoneNumber: usersTable.phoneNumber,
-      address: usersTable.address,
-      role: usersToClinicsTable.role,
-    })
-    .from(usersToClinicsTable)
-    .innerJoin(usersTable, eq(usersToClinicsTable.userId, usersTable.id))
-    .where(eq(usersToClinicsTable.clinicId, session.user.clinic.id));
+  // Buscar usuários da clínica usando server action
+  const clinicUsers = await getUsersAction();
 
   return (
     <PageContainer>
