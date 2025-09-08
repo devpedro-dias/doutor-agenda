@@ -1,54 +1,11 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Heart,
-  Stethoscope,
-  Eye,
-  Bone,
-  Baby,
-  Brain,
-  Lungs,
-  Syringe,
-  TestTube,
-  Microscope,
-  Pill,
-  Ambulance,
-  Activity,
-  Shield,
-  Droplet,
-  Zap,
-  Flower,
-  Bug,
-  Thermometer,
-  User,
-  GraduationCap,
-  Hospital,
-  Scale,
-  Apple,
-  Footprints,
-  Gavel,
-  Waves,
-  Snowflake,
-  Sparkles,
-  ChefHat,
-  Users,
-  Camera,
-  Radiation,
-  Hand,
-  Flask,
-  Home,
-  Factory,
-  Dumbbell,
-  Microscope as MicroscopeIcon,
-} from "lucide-react";
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 
 import { Badge } from "@/src/_components/ui/badge";
+import { Button } from "@/src/_components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/_components/ui/table";
-import { Button } from "@/src/_components/ui/button";
 
 interface MedicalSpecialty {
   id: string;
@@ -77,159 +33,13 @@ interface MedicalSpecialty {
 interface SpecialtiesTableProps {
   specialties: MedicalSpecialty[];
   isLoading: boolean;
-  onSpecialtyUpdated: () => void;
-  onRefresh: () => void;
 }
 
-// Função para obter ícone da especialidade
-const getSpecialtyIcon = (name: string) => {
-  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    "Alergologia": Flower,
-    "Anestesiologia": Syringe,
-    "Angiologia": Heart,
-    "Cancerologia": Shield,
-    "Cardiologia": Heart,
-    "Cirurgia Cardiovascular": Heart,
-    "Cirurgia de Cabeça e Pescoço": User,
-    "Cirurgia do Aparelho Digestivo": ChefHat,
-    "Cirurgia Geral": Stethoscope,
-    "Cirurgia Pediátrica": Baby,
-    "Cirurgia Plástica": Sparkles,
-    "Cirurgia Torácica": Lungs,
-    "Cirurgia Vascular": Droplet,
-    "Clínica Médica": Stethoscope,
-    "Dermatologia": Hand,
-    "Endocrinologia e Metabologia": Snowflake,
-    "Endoscopia": TestTube,
-    "Gastroenterologia": ChefHat,
-    "Geriatria": User,
-    "Ginecologia e Obstetrícia": Users,
-    "Hematologia e Hemoterapia": Droplet,
-    "Hepatologia": Flask,
-    "Homeopatia": Flower,
-    "Infectologia": Bug,
-    "Mastologia": Shield,
-    "Medicina de Emergência": Ambulance,
-    "Medicina do Esporte": Dumbbell,
-    "Medicina do Trabalho": Factory,
-    "Medicina de Família e Comunidade": Home,
-    "Medicina Física e Reabilitação": Footprints,
-    "Medicina Intensiva": Hospital,
-    "Medicina Legal e Perícia Médica": Gavel,
-    "Nefrologia": Waves,
-    "Neurocirurgia": Brain,
-    "Neurologia": Brain,
-    "Nutrologia": Apple,
-    "Oftalmologia": Eye,
-    "Oncologia Clínica": Shield,
-    "Ortopedia e Traumatologia": Bone,
-    "Otorrinolaringologia": Thermometer,
-    "Patologia": Microscope,
-    "Patologia Clínica/Medicina Laboratorial": TestTube,
-    "Pediatria": Baby,
-    "Pneumologia": Lungs,
-    "Psiquiatria": Brain,
-    "Radiologia e Diagnóstico por Imagem": Camera,
-    "Radioterapia": Radiation,
-    "Reumatologia": Hand,
-    "Urologia": Stethoscope,
-  };
 
-  const IconComponent = iconMap[name];
-  return IconComponent || Stethoscope;
-};
-
-const columns = (
-  onEdit: (specialty: MedicalSpecialty) => void,
-  onDelete: (specialty: MedicalSpecialty) => void,
-): ColumnDef<MedicalSpecialty>[] => [
-  {
-    accessorKey: "name",
-    header: "Nome",
-    cell: ({ row }) => {
-      const name = row.getValue("name") as string;
-      const IconComponent = getSpecialtyIcon(name);
-      return (
-        <div className="flex items-center gap-2 font-medium">
-          <IconComponent className="h-4 w-4 text-muted-foreground" />
-          <span>{name}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "description",
-    header: "Descrição",
-    cell: ({ row }) => {
-      const description = row.getValue("description") as string | null;
-      return (
-        <div className="text-muted-foreground max-w-xs truncate text-sm">
-          {description || "Sem descrição"}
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "isActive",
-    header: "Status",
-    cell: ({ row }) => {
-      const isActive = row.getValue("isActive") as boolean;
-      return (
-        <Badge variant={isActive ? "default" : "secondary"}>
-          {isActive ? "Ativa" : "Inativa"}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Criada em",
-    cell: ({ row }) => {
-      const createdAt = row.getValue("createdAt") as Date;
-      return (
-        <div className="text-muted-foreground text-sm">
-          {format(createdAt, "dd/MM/yyyy", { locale: ptBR })}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const specialty = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onEdit(specialty)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(specialty)}
-              className="text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              {specialty.isActive ? "Desativar" : "Excluir"}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
 
 export function SpecialtiesTable({
   specialties,
   isLoading,
-  onSpecialtyUpdated,
-  onRefresh,
 }: SpecialtiesTableProps) {
   const handleEdit = (specialty: MedicalSpecialty) => {
     // TODO: Implementar edição
@@ -290,11 +100,7 @@ export function SpecialtiesTable({
           {specialties.map((specialty) => (
             <TableRow key={specialty.id}>
               <TableCell>
-                <div className="flex items-center gap-2 font-medium">
-                  {(() => {
-                    const IconComponent = getSpecialtyIcon(specialty.name);
-                    return <IconComponent className="h-4 w-4 text-muted-foreground" />;
-                  })()}
+                <div className="font-medium">
                   <span>{specialty.name}</span>
                 </div>
               </TableCell>
