@@ -33,13 +33,15 @@ const DoctorsPage = async () => {
     .select({
       id: doctorsTable.id,
       name: doctorsTable.name,
+      userId: doctorsTable.userId,
+      clinicId: doctorsTable.clinicId,
+      avatarImageUrl: doctorsTable.avatarImageUrl,
       availableFromWeekDay: doctorsTable.availableFromWeekDay,
       availableToWeekDay: doctorsTable.availableToWeekDay,
       availableFromTime: doctorsTable.availableFromTime,
       availableToTime: doctorsTable.availableToTime,
       appointmentPriceInCents: doctorsTable.appointmentPriceInCents,
       specialtyId: doctorsTable.specialtyId,
-      clinicId: doctorsTable.clinicId,
       createdAt: doctorsTable.createdAt,
       updatedAt: doctorsTable.updatedAt,
       specialty: {
