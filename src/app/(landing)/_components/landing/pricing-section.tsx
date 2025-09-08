@@ -1,21 +1,26 @@
-import { Button } from "@/src/_components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/_components/ui/card"
-import { Check } from "lucide-react"
+import { Button } from "@/src/_components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/_components/ui/card";
+import { Check } from "lucide-react";
 
 export function PricingSection() {
   return (
-    <section id="planos" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+    <section id="planos" className="bg-muted/30 px-4 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 text-center">
+          <h2 className="text-foreground mb-4 text-3xl font-bold sm:text-4xl">
             Planos feitos para sua clínica
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-muted-foreground text-xl">
             Escolha o plano ideal para o tamanho da sua prática médica
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-3">
           {/* Plano Básico */}
           <Card className="border-2">
             <CardHeader>
@@ -28,15 +33,15 @@ export function PricingSection() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Até 500 agendamentos/mês</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Lembretes automáticos</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>1 médico</span>
                 </div>
               </div>
@@ -45,9 +50,9 @@ export function PricingSection() {
           </Card>
 
           {/* Plano Profissional */}
-          <Card className="border-2 border-primary relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
+          <Card className="border-primary relative border-2">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+              <span className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-sm font-semibold">
                 Mais Popular
               </span>
             </div>
@@ -61,23 +66,25 @@ export function PricingSection() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Até 2000 agendamentos/mês</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Até 5 médicos</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Relatórios avançados</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Suporte prioritário</span>
                 </div>
               </div>
-              <Button className="w-full bg-primary hover:bg-primary/90">Começar teste grátis</Button>
+              <Button className="bg-primary hover:bg-primary/90 w-full">
+                Começar teste grátis
+              </Button>
             </CardContent>
           </Card>
 
@@ -93,27 +100,29 @@ export function PricingSection() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Agendamentos ilimitados</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Médicos ilimitados</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>API completa</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Check className="h-4 w-4 text-primary" />
+                  <Check className="text-primary h-4 w-4" />
                   <span>Consultoria especializada</span>
                 </div>
               </div>
-              <Button variant="outline" className="w-full">Falar com vendas</Button>
+              <Button variant="outline" className="w-full">
+                Falar com vendas
+              </Button>
             </CardContent>
           </Card>
         </div>
       </div>
     </section>
-  )
+  );
 }

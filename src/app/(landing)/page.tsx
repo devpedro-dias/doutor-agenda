@@ -1,14 +1,14 @@
-import { Navbar } from "@/src/components/landing/navbar"
-import { HeroSection } from "@/src/components/landing/hero-section"
-import { FeaturesSection } from "@/src/components/landing/features-section"
-import { BenefitsSection } from "@/src/components/landing/benefits-section"
-import { TestimonialsSection } from "@/src/components/landing/testimonials-section"
-import { PricingSection } from "@/src/components/landing/pricing-section"
-import { Footer } from "@/src/components/landing/footer"
+import { Navbar } from "@/src/app/(landing)/_components/landing/navbar";
+import { HeroSection } from "@/src/app/(landing)/_components/landing/hero-section";
+import { FeaturesSection } from "@/src/app/(landing)/_components/landing/features-section";
+import { BenefitsSection } from "@/src/app/(landing)/_components/landing/benefits-section";
+import { TestimonialsSection } from "@/src/app/(landing)/_components/landing/testimonials-section";
+import { PricingSection } from "@/src/app/(landing)/_components/landing/pricing-section";
+import { Footer } from "@/src/app/(landing)/_components/landing/footer";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Navbar />
       <HeroSection />
       <FeaturesSection />
@@ -17,5 +17,5 @@ export default function HomePage() {
       <PricingSection />
       <Footer />
     </div>
-  )
+  );
 }
