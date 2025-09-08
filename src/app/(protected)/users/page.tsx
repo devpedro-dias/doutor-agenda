@@ -112,18 +112,6 @@ const UsersPage = () => {
         <UsersTable
           users={users}
           isLoading={isLoading}
-          onUserCreated={() => {
-            // Recarregar usuários após criação
-            const loadUsers = async () => {
-              try {
-                const data = await getUsersAction();
-                setUsers(data);
-              } catch (error) {
-                console.error("Erro ao recarregar usuários:", error);
-              }
-            };
-            loadUsers();
-          }}
           onEditUser={handleEditUser}
           onDeleteUser={handleDeleteUser}
           canEdit={!!isOwnerOrManager}
@@ -135,6 +123,7 @@ const UsersPage = () => {
         onOpenChange={setIsCreateDialogOpen}
         onUserCreated={() => {
           setIsCreateDialogOpen(false);
+          // Recarregar usuários após criação
           const loadUsers = async () => {
             try {
               const data = await getUsersAction();

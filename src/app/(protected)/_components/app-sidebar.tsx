@@ -66,10 +66,11 @@ export const AppSidebar = () => {
   const session = authClient.useSession();
   const [isSwitchingClinic, setIsSwitchingClinic] = useState(false);
 
-  // Verificar se o usuário é OWNER em alguma clínica
-  const isOwner =
-    session.data?.user.clinics?.some((clinic) => clinic.role === "OWNER") ||
-    false;
+  // Verificar se o usuário é OWNER ou MANAGER em alguma clínica
+  const isOwnerOrManager =
+    session.data?.user.clinics?.some(
+      (clinic) => clinic.role === "OWNER" || clinic.role === "MANAGER",
+    ) || false;
   const userClinics = session.data?.user.clinics || [];
 
   // Verificar se está carregando (sem sessão ou sem clínica)
@@ -114,7 +115,7 @@ export const AppSidebar = () => {
 
       {/* Company Header - Clínica Atual */}
       <div className="border-sidebar-border flex items-center gap-3 border-b p-4">
-        {isOwner && userClinics.length > 1 ? (
+        {isOwnerOrManager && userClinics.length > 1 ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex h-auto w-full cursor-pointer items-center gap-3 rounded-md p-0">
@@ -206,7 +207,7 @@ export const AppSidebar = () => {
           </h3>
           <div className="space-y-1">
             {items
-              .filter((item) => !item.ownerOnly || isOwner)
+              .filter((item) => !item.ownerOnly || isOwnerOrManager)
               .map((item) => (
                 <Button
                   key={item.title}

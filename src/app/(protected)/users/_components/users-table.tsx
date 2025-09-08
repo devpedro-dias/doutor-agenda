@@ -15,7 +15,6 @@ interface User {
 interface UsersTableProps {
   users: User[];
   isLoading: boolean;
-  onUserCreated: () => void;
   onEditUser: (user: User) => void;
   onDeleteUser: () => void;
   canEdit: boolean;
@@ -24,7 +23,7 @@ interface UsersTableProps {
 const columns = (
   onEditUser: (user: User) => void,
   onDeleteUser: () => void,
-  canEdit: boolean
+  canEdit: boolean,
 ): ColumnDef<User>[] => [
   {
     accessorKey: "name",
@@ -51,10 +50,10 @@ const columns = (
             role === "OWNER"
               ? "default"
               : role === "MANAGER"
-              ? "secondary"
-              : role === "DOCTOR"
-              ? "outline"
-              : "outline"
+                ? "secondary"
+                : role === "DOCTOR"
+                  ? "outline"
+                  : "outline"
           }
         >
           {role === "OWNER" && "Proprietário"}
@@ -86,7 +85,7 @@ export const UsersTable = ({
   isLoading,
   onEditUser,
   onDeleteUser,
-  canEdit
+  canEdit,
 }: UsersTableProps) => {
   if (isLoading) {
     return (
