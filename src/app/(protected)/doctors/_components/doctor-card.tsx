@@ -34,7 +34,7 @@ type DoctorWithSpecialty = typeof doctorsTable.$inferSelect & {
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
-  };
+  } | null;
 };
 import {
   CalendarIcon,
@@ -88,7 +88,7 @@ const DoctorCard = ({ doctor }: DoctorCardProps) => {
         <div>
           <h3 className="text-sm font-medium">{doctor.name}</h3>
           <p className="text-muted-foreground text-sm">
-            {doctor.specialty.name}
+            {doctor.specialty?.name || "Especialidade não definida"}
           </p>
         </div>
       </CardHeader>
