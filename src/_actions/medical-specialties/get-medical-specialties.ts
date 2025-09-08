@@ -3,10 +3,10 @@
 import { auth } from "@/src/lib/auth";
 import { db } from "@/src/db";
 import { medicalSpecialtiesTable } from "@/src/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
-export const getMedicalSpecialtiesAction = async (includeInactive = false) => {
+export const getMedicalSpecialtiesAction = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -19,7 +19,7 @@ export const getMedicalSpecialtiesAction = async (includeInactive = false) => {
     throw new Error("No clinic selected");
   }
 
-  // Buscar especialidades da clínica atual
+  // Buscar todas as especialidades da clínica atual (ativas e inativas)
   const specialties = await db
     .select({
       id: medicalSpecialtiesTable.id,
@@ -30,14 +30,7 @@ export const getMedicalSpecialtiesAction = async (includeInactive = false) => {
       updatedAt: medicalSpecialtiesTable.updatedAt,
     })
     .from(medicalSpecialtiesTable)
-    .where(
-      and(
-        eq(medicalSpecialtiesTable.clinicId, session.user.clinic.id),
-        includeInactive
-          ? undefined
-          : eq(medicalSpecialtiesTable.isActive, true),
-      ),
-    )
+    .where(eq(medicalSpecialtiesTable.clinicId, session.user.clinic.id))
     .orderBy(medicalSpecialtiesTable.name);
 
   return specialties;

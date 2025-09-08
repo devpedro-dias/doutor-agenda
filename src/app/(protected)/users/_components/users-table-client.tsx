@@ -14,10 +14,9 @@ interface User {
 
 interface UsersTableClientProps {
   initialUsers: User[];
-  canEdit: boolean;
 }
 
-const UsersTableClient = ({ initialUsers, canEdit }: UsersTableClientProps) => {
+const UsersTableClient = ({ initialUsers }: UsersTableClientProps) => {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
   const session = authClient.useSession();
@@ -52,7 +51,6 @@ const UsersTableClient = ({ initialUsers, canEdit }: UsersTableClientProps) => {
     <UsersTable
       users={users}
       isLoading={isLoading}
-      canEdit={canEdit}
       onUsersChange={handleUsersChange}
     />
   );

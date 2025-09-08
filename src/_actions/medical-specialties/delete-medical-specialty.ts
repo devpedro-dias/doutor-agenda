@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 import { db } from "@/src/db";
 import { doctorsTable, medicalSpecialtiesTable } from "@/src/db/schema";
@@ -61,8 +62,20 @@ export const deleteMedicalSpecialtyAction = actionClient
       )
       .limit(1);
 
-    if (doctorsUsingSpecialty.length > 0) {
-      // Se existem médicos usando, apenas desativar
+    const hasDoctors = doctorsUsingSpecialty.length > 0;
+    const isCurrentlyActive = existingSpecialty[0].isActive;
+
+    // Lógica de decisão:
+    // - Se está ATIVA E tem médicos → ERRO (não pode desativar)
+    // - Se está ATIVA E não tem médicos → desativar
+    // - Se está INATIVA → excluir fisicamente
+    if (isCurrentlyActive && hasDoctors) {
+      // Está ativa e tem médicos → não pode desativar
+      throw new Error(
+        "Não é possível desativar esta especialidade pois ainda há médicos associados a ela. Remova todos os médicos desta especialidade primeiro.",
+      );
+    } else if (isCurrentlyActive && !hasDoctors) {
+      // Está ativa e não tem médicos → desativar
       await db
         .update(medicalSpecialtiesTable)
         .set({
@@ -71,16 +84,19 @@ export const deleteMedicalSpecialtyAction = actionClient
         })
         .where(eq(medicalSpecialtiesTable.id, parsedInput.id));
 
+      revalidatePath("/medical-specialties");
+
       return {
         success: true,
-        message:
-          "Especialidade desativada com sucesso (ainda possui médicos associados)",
+        message: "Especialidade desativada com sucesso",
       };
     } else {
-      // Se não existem médicos usando, pode excluir fisicamente
+      // Está inativa → excluir fisicamente
       await db
         .delete(medicalSpecialtiesTable)
         .where(eq(medicalSpecialtiesTable.id, parsedInput.id));
+
+      revalidatePath("/medical-specialties");
 
       return {
         success: true,

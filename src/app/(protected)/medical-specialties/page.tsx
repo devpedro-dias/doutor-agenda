@@ -1,10 +1,63 @@
 import { Suspense } from "react";
 
 import { getMedicalSpecialtiesAction } from "@/src/_actions/medical-specialties";
-import { PageContainer } from "@/src/_components/ui/page-container";
-import { auth } from "@/src/lib/auth";
+import {
+  PageContainer,
+  PageContent,
+  PageDescription,
+  PageHeader,
+  PageHeaderContent,
+  PageTitle,
+} from "@/src/_components/ui/page-container";
 import { MedicalSpecialtiesClient } from "./_components/medical-specialties-client";
-import { headers } from "next/headers";
+
+// Skeleton component for loading state
+function MedicalSpecialtiesSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Filter and Actions Skeleton */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="bg-muted h-4 w-12 animate-pulse rounded" />
+            <div className="bg-muted h-8 w-24 animate-pulse rounded" />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <div className="bg-muted h-9 w-40 animate-pulse rounded" />
+          <div className="bg-muted h-9 w-44 animate-pulse rounded" />
+        </div>
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="rounded-md border">
+        {/* Table Header */}
+        <div className="bg-muted/50 border-b px-4 py-3">
+          <div className="flex gap-4">
+            <div className="bg-muted h-4 w-16 animate-pulse rounded" />
+            <div className="bg-muted h-4 w-20 animate-pulse rounded" />
+            <div className="bg-muted h-4 w-24 animate-pulse rounded" />
+            <div className="bg-muted h-4 w-20 animate-pulse rounded" />
+            <div className="bg-muted ml-auto h-4 w-12 animate-pulse rounded" />
+          </div>
+        </div>
+
+        {/* Table Rows */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="border-b px-4 py-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-muted h-6 w-16 animate-pulse rounded-full" />
+              <div className="bg-muted h-4 w-32 animate-pulse rounded" />
+              <div className="bg-muted h-4 w-40 animate-pulse rounded" />
+              <div className="bg-muted h-4 w-20 animate-pulse rounded" />
+              <div className="bg-muted ml-auto h-8 w-8 animate-pulse rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export const metadata = {
   title: "Especialidades Médicas",
@@ -22,50 +75,23 @@ async function getMedicalSpecialties() {
 }
 
 export default async function MedicalSpecialtiesPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  // Verificar se o usuário é OWNER ou MANAGER
-  const isOwnerOrManager =
-    session?.user?.clinics?.some(
-      (clinic) => clinic.role === "OWNER" || clinic.role === "MANAGER",
-    ) || false;
-
-  if (!isOwnerOrManager) {
-    return (
-      <PageContainer>
-        <div className="flex flex-col items-center justify-center py-12">
-          <h1 className="text-destructive mb-4 text-2xl font-bold">
-            Acesso Negado
-          </h1>
-          <p className="text-muted-foreground text-center">
-            Apenas proprietários e gerentes podem gerenciar especialidades
-            médicas.
-          </p>
-        </div>
-      </PageContainer>
-    );
-  }
-
   const specialties = await getMedicalSpecialties();
 
   return (
     <PageContainer>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Especialidades Médicas
-          </h1>
-          <p className="text-muted-foreground">
+      <PageHeader>
+        <PageHeaderContent>
+          <PageTitle>Especialidades Médicas</PageTitle>
+          <PageDescription>
             Gerencie as especialidades médicas disponíveis na sua clínica
-          </p>
-        </div>
-
-        <Suspense fallback={<div>Carregando...</div>}>
+          </PageDescription>
+        </PageHeaderContent>
+      </PageHeader>
+      <PageContent>
+        <Suspense fallback={<MedicalSpecialtiesSkeleton />}>
           <MedicalSpecialtiesClient initialSpecialties={specialties} />
         </Suspense>
-      </div>
+      </PageContent>
     </PageContainer>
   );
 }

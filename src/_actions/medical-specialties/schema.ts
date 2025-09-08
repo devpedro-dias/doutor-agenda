@@ -30,9 +30,7 @@ export const updateMedicalSpecialtySchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-export const getMedicalSpecialtiesSchema = z.object({
-  includeInactive: z.boolean().optional().default(false),
-});
+export const getMedicalSpecialtiesSchema = z.object({});
 
 export const deleteMedicalSpecialtySchema = z.object({
   id: z.string().uuid({

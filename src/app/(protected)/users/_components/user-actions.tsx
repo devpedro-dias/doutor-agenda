@@ -35,10 +35,9 @@ interface UserActionsProps {
   user: User;
   onEdit: (user: User) => void;
   onDelete: () => void;
-  canEdit: boolean;
 }
 
-const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
+const UserActions = ({ user, onEdit, onDelete }: UserActionsProps) => {
   const deleteUserAction = useAction(deleteUser, {
     onSuccess: () => {
       toast.success("Usuário removido com sucesso.");
@@ -66,10 +65,6 @@ const UserActions = ({ user, onEdit, onDelete, canEdit }: UserActionsProps) => {
     if (!user) return;
     deleteUserAction.execute({ userId: user.id });
   };
-
-  if (!canEdit) {
-    return null;
-  }
 
   return (
     <DropdownMenu>

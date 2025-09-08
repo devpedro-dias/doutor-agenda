@@ -50,14 +50,12 @@ interface User {
 interface UsersTableProps {
   users: User[];
   isLoading: boolean;
-  canEdit: boolean;
   onUsersChange?: () => void;
 }
 
 const columns = (
   onEditUser: (user: User) => void,
   onDeleteUser: () => void,
-  canEdit: boolean,
 ): ColumnDef<User>[] => [
   {
     accessorKey: "name",
@@ -131,12 +129,7 @@ const columns = (
     cell: ({ row }) => {
       const user = row.original;
       return (
-        <UserActions
-          user={user}
-          onEdit={onEditUser}
-          onDelete={onDeleteUser}
-          canEdit={canEdit}
-        />
+        <UserActions user={user} onEdit={onEditUser} onDelete={onDeleteUser} />
       );
     },
   },
@@ -145,7 +138,6 @@ const columns = (
 export const UsersTable = ({
   users,
   isLoading,
-  canEdit,
   onUsersChange,
 }: UsersTableProps) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -196,7 +188,7 @@ export const UsersTable = ({
   return (
     <>
       <DataTable
-        columns={columns(handleEditUser, handleDeleteUser, canEdit)}
+        columns={columns(handleEditUser, handleDeleteUser)}
         data={users}
       />
 

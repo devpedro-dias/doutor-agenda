@@ -32,12 +32,11 @@ const UsersPage = async () => {
     redirect("/new-subscription");
   }
 
-  // Verificar se o usuário atual é OWNER ou MANAGER
   const userRole = session.user.clinics?.find(
     (clinic) => clinic.id === session.user.clinic?.id,
   )?.role;
 
-  const canEdit = userRole === "OWNER" || userRole === "MANAGER";
+  const canAddUsers = userRole === "OWNER" || userRole === "MANAGER";
 
   // Buscar usuários da clínica
   const clinicUsers = await db
@@ -63,14 +62,14 @@ const UsersPage = async () => {
             Gerencie os usuários da sua clínica e suas permissões.
           </PageDescription>
         </PageHeaderContent>
-        {canEdit && (
+        {canAddUsers && (
           <PageActions>
             <AddUserButton />
           </PageActions>
         )}
       </PageHeader>
       <PageContent>
-        <UsersTableClient initialUsers={clinicUsers} canEdit={canEdit} />
+        <UsersTableClient initialUsers={clinicUsers} />
       </PageContent>
     </PageContainer>
   );
