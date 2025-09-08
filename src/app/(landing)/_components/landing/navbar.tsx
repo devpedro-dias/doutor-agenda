@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/src/_components/ui/button";
 import { Menu, X, Stethoscope } from "lucide-react";
+import Link from "next/link";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +48,7 @@ export function Navbar() {
               variant="ghost"
               className="text-muted-foreground hover:text-foreground"
             >
-              Já sou cliente
+              <Link href="/authentication">Já sou cliente</Link>
             </Button>
             <Button className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow">
               Começar
@@ -85,11 +86,11 @@ export function Navbar() {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
-                <Button variant="ghost" className="justify-start">
-                  Já sou cliente
+                <Button variant="ghost" className="justify-start" asChild>
+                  <Link href="/authentication">Já sou cliente</Link>
                 </Button>
                 <Button className="bg-accent hover:bg-accent/90 text-accent-foreground justify-start">
-                  Começar
+                  <Link href="#planos">Começar</Link>
                 </Button>
               </div>
             </div>

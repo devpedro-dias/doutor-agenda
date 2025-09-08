@@ -80,8 +80,10 @@ const LoginForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
           <CardHeader>
-            <CardTitle>Criar conta</CardTitle>
-            <CardDescription>Crie uma conta para continuar.</CardDescription>
+            <CardTitle>Fazer login</CardTitle>
+            <CardDescription>
+              Digite suas credenciais para acessar.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
