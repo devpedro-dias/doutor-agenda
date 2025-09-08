@@ -114,7 +114,7 @@ const UpsertPatientForm = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome do paciente</FormLabel>
+                <FormLabel required>Nome do paciente</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Digite o nome completo do paciente"
@@ -130,7 +130,7 @@ const UpsertPatientForm = ({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel required>Email</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -147,7 +147,7 @@ const UpsertPatientForm = ({
             name="phoneNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Número de telefone</FormLabel>
+                <FormLabel required>Número de telefone</FormLabel>
                 <FormControl>
                   <PatternFormat
                     format="(##) #####-####"
@@ -169,7 +169,7 @@ const UpsertPatientForm = ({
             name="sex"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sexo</FormLabel>
+                <FormLabel required>Sexo</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

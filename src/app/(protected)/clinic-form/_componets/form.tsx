@@ -63,7 +63,7 @@ const ClinicForm = ({ showCancelButton = false }: ClinicFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome da clínica</FormLabel>
+                <FormLabel required>Nome da clínica</FormLabel>
                 <FormControl>
                   <Input placeholder="Digite o nome da clínica" {...field} />
                 </FormControl>

@@ -149,7 +149,7 @@ const UpsertDoctorForm = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome</FormLabel>
+                <FormLabel required>Nome</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -163,7 +163,7 @@ const UpsertDoctorForm = ({
             name="specialty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Especialidade</FormLabel>
+                <FormLabel required>Especialidade</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -191,7 +191,7 @@ const UpsertDoctorForm = ({
             name="appointmentPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Preço da consulta</FormLabel>
+                <FormLabel required>Preço da consulta</FormLabel>
                 <NumericFormat
                   value={field.value}
                   onValueChange={(value) => {
@@ -274,7 +274,9 @@ const UpsertDoctorForm = ({
             name="availableFromTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Horário inicial de disponibilidade</FormLabel>
+                <FormLabel required>
+                  Horário inicial de disponibilidade
+                </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -343,7 +345,7 @@ const UpsertDoctorForm = ({
             name="availableToTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Horário final de disponibilidade</FormLabel>
+                <FormLabel required>Horário final de disponibilidade</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

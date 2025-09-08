@@ -179,7 +179,7 @@ const AddAppointmentForm = ({
             name="patientId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Paciente</FormLabel>
+                <FormLabel required>Paciente</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -207,7 +207,7 @@ const AddAppointmentForm = ({
             name="doctorId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Médico</FormLabel>
+                <FormLabel required>Médico</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -235,7 +235,7 @@ const AddAppointmentForm = ({
             name="appointmentPrice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor da consulta</FormLabel>
+                <FormLabel required>Valor da consulta</FormLabel>
                 <NumericFormat
                   value={field.value}
                   onValueChange={(value) => {
@@ -260,7 +260,7 @@ const AddAppointmentForm = ({
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Data</FormLabel>
+                <FormLabel required>Data</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -303,7 +303,7 @@ const AddAppointmentForm = ({
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Horário</FormLabel>
+                <FormLabel required>Horário</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
