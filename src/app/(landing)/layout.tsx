@@ -1,7 +1,6 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Analytics } from "@vercel/analytics/next";
 import "@/src/app/globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +32,6 @@ export default function RootLayout({
     <html lang="pt-BR" className="dark">
       <body className={`font-sans`}>
         <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
       </body>
     </html>
   );

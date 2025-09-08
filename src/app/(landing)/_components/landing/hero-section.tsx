@@ -78,7 +78,7 @@ export function HeroSection() {
               <CardContent className="space-y-6 p-0">
                 <div className="space-y-2 text-center">
                   <h3 className="text-foreground text-2xl font-bold">
-                    Teste grátis por 30 dias
+                    Teste grátis por 14 dias
                   </h3>
                   <p className="text-muted-foreground">
                     Sem compromisso. Cancele quando quiser.
