@@ -52,6 +52,12 @@ const items = [
     url: "/patients",
     icon: UsersRound,
   },
+  {
+    title: "Usuários",
+    url: "/users",
+    icon: UsersRound,
+    ownerOnly: true,
+  },
 ];
 
 export const AppSidebar = () => {
@@ -199,23 +205,25 @@ export const AppSidebar = () => {
             Menu Principal
           </h3>
           <div className="space-y-1">
-            {items.map((item) => (
-              <Button
-                key={item.title}
-                variant="ghost"
-                className={cn(
-                  "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-9 w-full justify-start gap-3 px-2",
-                  pathname === item.url &&
-                    "bg-sidebar-accent text-sidebar-accent-foreground",
-                )}
-                asChild
-              >
-                <Link href={item.url}>
-                  <item.icon className="h-4 w-4" />
-                  <span className="flex-1 text-left">{item.title}</span>
-                </Link>
-              </Button>
-            ))}
+            {items
+              .filter((item) => !item.ownerOnly || isOwner)
+              .map((item) => (
+                <Button
+                  key={item.title}
+                  variant="ghost"
+                  className={cn(
+                    "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground h-9 w-full justify-start gap-3 px-2",
+                    pathname === item.url &&
+                      "bg-sidebar-accent text-sidebar-accent-foreground",
+                  )}
+                  asChild
+                >
+                  <Link href={item.url}>
+                    <item.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{item.title}</span>
+                  </Link>
+                </Button>
+              ))}
           </div>
         </div>
 
