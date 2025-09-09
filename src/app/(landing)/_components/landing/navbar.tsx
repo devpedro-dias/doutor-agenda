@@ -15,6 +15,21 @@ export function Navbar() {
     { name: "Contato", href: "#contato" },
   ];
 
+  const handleSmoothScroll = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const handleNavClick = (href: string) => {
+    handleSmoothScroll(href);
+    setIsOpen(false); // Close mobile menu
+  };
+
   return (
     <nav className="bg-background/95 border-border fixed top-0 z-50 w-full border-b backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -32,13 +47,13 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden items-center space-x-8 md:flex">
             {navItems.map((item) => (
-              <a
+              <button
                 key={item.name}
-                href={item.href}
+                onClick={() => handleSmoothScroll(item.href)}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 {item.name}
-              </a>
+              </button>
             ))}
           </div>
 
@@ -50,8 +65,11 @@ export function Navbar() {
             >
               <Link href="/authentication">Já sou cliente</Link>
             </Button>
-            <Button className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow" asChild>
-              <Link href="#planos">Começar</Link>
+            <Button
+              className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow"
+              onClick={() => handleSmoothScroll("#planos")}
+            >
+              Começar
             </Button>
           </div>
 
@@ -76,21 +94,23 @@ export function Navbar() {
           <div className="md:hidden">
             <div className="bg-background border-border space-y-1 border-t px-2 pt-2 pb-3">
               {navItems.map((item) => (
-                <a
+                <button
                   key={item.name}
-                  href={item.href}
-                  className="text-muted-foreground hover:text-foreground block px-3 py-2 transition-colors duration-200"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => handleNavClick(item.href)}
+                  className="text-muted-foreground hover:text-foreground block w-full px-3 py-2 text-left transition-colors duration-200"
                 >
                   {item.name}
-                </a>
+                </button>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
                 <Button variant="ghost" className="justify-start" asChild>
                   <Link href="/authentication">Já sou cliente</Link>
                 </Button>
-                <Button className="bg-accent hover:bg-accent/90 text-accent-foreground justify-start">
-                  <Link href="#planos">Começar</Link>
+                <Button
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground justify-start"
+                  onClick={() => handleNavClick("#planos")}
+                >
+                  Começar
                 </Button>
               </div>
             </div>

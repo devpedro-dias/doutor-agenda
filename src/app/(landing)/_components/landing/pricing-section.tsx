@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/src/_components/ui/button";
 import {
   Card,
@@ -6,8 +8,27 @@ import {
   CardTitle,
 } from "@/src/_components/ui/card";
 import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function PricingSection() {
+  const router = useRouter();
+
+  const handleBasicTrial = () => {
+    // Redireciona para a seção do formulário no hero
+    document.getElementById("trial-form")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
+  const handleProfessionalTrial = () => {
+    // Por enquanto, redireciona para contato
+    router.push("/#contato");
+  };
+
+  const handleEnterpriseContact = () => {
+    router.push("/#contato");
+  };
+
   return (
     <section id="planos" className="bg-muted/30 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -45,7 +66,9 @@ export function PricingSection() {
                   <span>1 médico</span>
                 </div>
               </div>
-              <Button className="mt-6 w-full">Começar teste grátis</Button>
+              <Button className="mt-6 w-full" onClick={handleBasicTrial}>
+                Começar teste grátis
+              </Button>
             </CardContent>
           </Card>
 
@@ -82,8 +105,11 @@ export function PricingSection() {
                   <span>Suporte prioritário</span>
                 </div>
               </div>
-              <Button className="bg-primary hover:bg-primary/90 mt-6 w-full">
-                Começar teste grátis
+              <Button
+                className="bg-primary hover:bg-primary/90 mt-6 w-full"
+                onClick={handleProfessionalTrial}
+              >
+                Fazer upgrade
               </Button>
             </CardContent>
           </Card>
@@ -116,7 +142,11 @@ export function PricingSection() {
                   <span>Consultoria especializada</span>
                 </div>
               </div>
-              <Button variant="outline" className="mt-6 w-full">
+              <Button
+                variant="outline"
+                className="mt-6 w-full"
+                onClick={handleEnterpriseContact}
+              >
                 Falar com vendas
               </Button>
             </CardContent>

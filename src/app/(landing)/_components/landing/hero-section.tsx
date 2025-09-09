@@ -6,17 +6,49 @@ import { useState } from "react";
 import { Button } from "@/src/_components/ui/button";
 import { Input } from "@/src/_components/ui/input";
 import { Card, CardContent } from "@/src/_components/ui/card";
-import { Calendar, Clock, Users, ArrowRight } from "lucide-react";
+import { Badge } from "@/src/_components/ui/badge";
+import { Calendar, Clock, Users, ArrowRight, Loader2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { createTrialCheckout } from "@/src/_actions/create-trial-checkout";
+import { loadStripe } from "@stripe/stripe-js";
+import { MaskedInput } from "@/src/_components/ui/masked-input";
 
 export function HeroSection() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
+  const createTrialCheckoutAction = useAction(createTrialCheckout, {
+    onSuccess: async ({ data }) => {
+      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+        throw new Error("Stripe publishable key not found");
+      }
+      const stripe = await loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+      );
+      if (!stripe) {
+        throw new Error("Stripe not found");
+      }
+      if (!data?.sessionId) {
+        throw new Error("Session ID not found");
+      }
+      await stripe.redirectToCheckout({
+        sessionId: data.sessionId,
+      });
+    },
+    onError: (error) => {
+      console.error("Erro ao criar checkout:", error);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[v0] Lead captured:", { name, email, phone });
-    // Here you would typically send the data to your backend
+
+    createTrialCheckoutAction.execute({
+      name,
+      email,
+      phone,
+    });
   };
 
   return (
@@ -71,20 +103,25 @@ export function HeroSection() {
 
           {/* Right Column - Lead Capture Form */}
           <div
+            id="trial-form"
             className="animate-fade-in-up"
             style={{ animationDelay: "0.2s" }}
           >
             <Card className="bg-card/50 animate-float border-0 p-8 shadow-2xl backdrop-blur-sm">
               <CardContent className="space-y-6 p-0">
                 <div className="space-y-2 text-center">
-                  <h3 className="text-foreground text-2xl font-bold">
-                    Teste grátis por 14 dias
-                  </h3>
+                  <div className="flex items-center justify-center space-x-2">
+                    <h3 className="text-foreground text-2xl font-bold">
+                      Teste grátis por 14 dias
+                    </h3>
+                    <Badge className="bg-primary text-white">
+                      Plano Básico
+                    </Badge>
+                  </div>
                   <p className="text-muted-foreground">
                     Sem compromisso. Cancele quando quiser.
                   </p>
                 </div>
-
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Input
@@ -107,21 +144,30 @@ export function HeroSection() {
                     />
                   </div>
                   <div>
-                    <Input
-                      type="tel"
+                    <MaskedInput
+                      mask="phone"
                       placeholder="Seu WhatsApp"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       className="h-12 text-base"
-                      required
                     />
                   </div>
                   <Button
                     type="submit"
                     className="bg-accent hover:bg-accent/90 text-accent-foreground group h-12 w-full text-base"
+                    disabled={createTrialCheckoutAction.isExecuting}
                   >
-                    Começar teste grátis
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    {createTrialCheckoutAction.isExecuting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      <>
+                        Começar teste grátis
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </>
+                    )}
                   </Button>
                 </form>
 
