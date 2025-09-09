@@ -108,7 +108,7 @@ const LoginForm = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/api/auth/callback/google",
+        callbackURL: "/dashboard",
       });
     } catch (error: unknown) {
       // Tratar erros específicos de autenticação
