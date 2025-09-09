@@ -105,12 +105,10 @@ const LoginForm = () => {
       document.cookie = "isTrial=true; path=/; max-age=604800; samesite=lax";
     }
 
-    // Para login com Google, tentar obter o email do usuário logado no Google
-    // Se não conseguir, redirecionar para OAuth normalmente
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: "/api/auth/callback/google",
       });
     } catch (error: unknown) {
       // Tratar erros específicos de autenticação
