@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Redirecionamento temporário para o webhook correto
 export async function POST(request: NextRequest) {
-    "⚠️  Webhook received at old endpoint (/api/stripe/webhook). Redirecting to new endpoint (/api/webhooks/stripe)...",
-  );
 
   try {
     // Criar URL para o endpoint correto
@@ -11,8 +9,6 @@ export async function POST(request: NextRequest) {
     url.pathname = "/api/webhooks/stripe";
     url.protocol = "http";
     url.host = "localhost:3000";
-
-"🔄 Redirecting to:", url.toString());
 
     // Obter o corpo da requisição
     const body = await request.text();
@@ -29,8 +25,6 @@ export async function POST(request: NextRequest) {
     });
 
     const responseText = await response.text();
-"✅ Webhook redirected successfully. Status:", response.status);
-"📄 Response:", responseText);
 
     return new Response(responseText, {
       status: response.status,

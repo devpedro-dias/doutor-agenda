@@ -36,7 +36,7 @@ export function HeroSection() {
         sessionId: data.sessionId,
       });
     },
-    onError: (error) => {
+    onError: () => {
     },
   });
 

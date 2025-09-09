@@ -6,7 +6,6 @@ import { usersTable } from "@/src/db/schema";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 
-// Schema para validação dos dados do usuário trial
 const createTrialUserSchema = z.object({
   email: z.string().email("Email inválido"),
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -21,15 +20,13 @@ export const createTrialUser = actionClient
     try {
       const { email, name, phone, planId, customerId } = parsedInput;
 
-      // Verificar se usuário já existe
       const existingUser = await db.query.usersTable.findFirst({
         where: eq(usersTable.email, email),
       });
 
       if (existingUser) {
-
-        // Atualizar dados do usuário existente se necessário
-        if (!existingUser.stripeCustomerId) {
+        // Se o usuário existe mas não tem customerId ou subscriptionId, atualiza
+        if (!existingUser.stripeCustomerId || !existingUser.stripeSubscriptionId) {
           await db
             .update(usersTable)
             .set({
@@ -52,41 +49,32 @@ export const createTrialUser = actionClient
         };
       }
 
-      // Criar usuário diretamente no banco
       const userId = crypto.randomUUID();
 
-      const [newUser] = await db
-        .insert(usersTable)
-        .values({
-          id: userId,
-          name,
-          email,
-          phoneNumber: phone,
-          plan: planId,
-          stripeCustomerId: customerId,
-          emailVerified: false, // Usuário precisa verificar email depois
-          cpf: null,
-          address: null,
-          cep: null,
-          street: null,
-          number: null,
-          complement: null,
-          neighborhood: null,
-          city: null,
-          state: null,
-          image: null,
-          stripeSubscriptionId: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-        .returning();
+      const result = await db.insert(usersTable).values({
+        id: userId,
+        name,
+        email,
+        phoneNumber: phone,
+        plan: planId,
+        stripeCustomerId: customerId,
+        stripeSubscriptionId: null,
+        emailVerified: false,
+        cpf: null,
+        address: null,
+        cep: null,
+        street: null,
+        number: null,
+        complement: null,
+        neighborhood: null,
+        city: null,
+        state: null,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }).returning();
 
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        plan: newUser.plan,
-        stripeCustomerId: newUser.stripeCustomerId,
-      });
+      const newUser = result[0];
 
       return {
         success: true,
@@ -97,7 +85,7 @@ export const createTrialUser = actionClient
           plan: newUser.plan,
         },
       };
-    } catch (error) {
+    } catch {
       throw new Error("Falha ao criar usuário trial");
     }
   });

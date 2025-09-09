@@ -110,7 +110,7 @@ const UpsertDoctorForm = ({
         setSpecialties(
           specialtiesData.map((s) => ({ id: s.id, name: s.name })),
         );
-      } catch (error) {
+        } catch {
         toast.error("Erro ao carregar especialidades");
       } finally {
         setIsLoadingSpecialties(false);

@@ -22,8 +22,6 @@ export const createTrialCheckout = actionClient
       throw new Error("Stripe basic plan price ID not found");
     }
 
-
-
     // Primeiro, criar um customer
     const customer = await stripe.customers.create({
       email: parsedInput.email,
@@ -34,7 +32,6 @@ export const createTrialCheckout = actionClient
         isTrial: "true",
       },
     });
-
 
     // Depois, criar uma subscription com trial
     const subscription = await stripe.subscriptions.create({
@@ -55,7 +52,6 @@ export const createTrialCheckout = actionClient
       },
     });
 
-
     // Agora criar a sessão de checkout para coletar método de pagamento
     const sessionConfig = {
       mode: "setup" as const, // Mudar para setup para coletar payment method sem cobrança imediata
@@ -75,10 +71,8 @@ export const createTrialCheckout = actionClient
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/`,
     };
 
-
     const { id: sessionId } =
       await stripe.checkout.sessions.create(sessionConfig);
-
 
     return {
       sessionId,

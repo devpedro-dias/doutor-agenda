@@ -48,7 +48,7 @@ export function MedicalSpecialtiesClient({
     try {
       const updatedSpecialties = await getMedicalSpecialtiesAction();
       setSpecialties(updatedSpecialties);
-    } catch (error) {
+      } catch {
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +68,7 @@ export function MedicalSpecialtiesClient({
         toast.success(result.message);
         loadSpecialties();
       }
-    } catch (error) {
+      } catch {
       toast.error("Erro ao popular especialidades");
     } finally {
       setIsLoading(false);

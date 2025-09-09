@@ -105,7 +105,7 @@ export const AppSidebar = () => {
         // Forçar recarga completa da página para atualizar a sessão
         window.location.reload();
       }
-    } catch (error) {
+      } catch {
       toast.error("Erro ao trocar de clínica");
       setIsSwitchingClinic(false);
     }

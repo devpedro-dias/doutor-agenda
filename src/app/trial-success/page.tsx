@@ -13,11 +13,7 @@ export default async function TrialSuccessPage({
 }) {
   const resolvedSearchParams = await searchParams;
   const sessionId = resolvedSearchParams.session_id;
-  const subscriptionId = resolvedSearchParams.subscription_id;
-
-    sessionId,
-    subscriptionId,
-  });
+  // const subscriptionId = resolvedSearchParams.subscription_id;
 
   if (!sessionId) {
     redirect("/");

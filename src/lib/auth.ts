@@ -65,7 +65,7 @@ export const auth = betterAuth({
               selectedClinic = parsedClinic;
             }
           }
-        } catch (error) {
+          } catch {
           // Se houver erro ao ler o cookie, usar a primeira clínica
         }
 
@@ -78,7 +78,7 @@ export const auth = betterAuth({
           },
           session,
         };
-      } catch (error) {
+          } catch {
         // Return basic user data if database query fails
         return {
           user: {

@@ -136,7 +136,7 @@ const DashboardContent = () => {
         });
 
         setDashboardData(data);
-      } catch (error) {
+        } catch {
       } finally {
         setIsLoading(false);
       }

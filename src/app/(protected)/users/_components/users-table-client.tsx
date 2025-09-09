@@ -28,7 +28,7 @@ const UsersTableClient = ({ initialUsers }: UsersTableClientProps) => {
       setIsLoading(true);
       const data = await getUsersAction();
       setUsers(data);
-    } catch (error) {
+      } catch {
     } finally {
       setIsLoading(false);
     }

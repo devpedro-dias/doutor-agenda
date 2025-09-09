@@ -34,11 +34,5 @@ export const switchClinic = async (clinicId: string) => {
     maxAge: 60 * 60 * 24 * 30,
   });
 
-    "Clínica alterada para:",
-    selectedClinic.name,
-    "ID:",
-    selectedClinic.id,
-  );
-
   return { success: true, clinic: selectedClinic };
 };
