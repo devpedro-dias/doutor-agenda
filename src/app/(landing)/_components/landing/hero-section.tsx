@@ -36,8 +36,7 @@ export function HeroSection() {
         sessionId: data.sessionId,
       });
     },
-    onError: () => {
-    },
+    onError: () => {},
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -171,7 +170,8 @@ export function HeroSection() {
                 </form>
 
                 <div className="text-muted-foreground text-center text-sm">
-                  ✓ Sem cartão de crédito • ✓ Configuração em 5 minutos
+                  ✓ Sem compromisso • ✓ Configuração em menos de 5 minutos • ✓
+                  Ativação imediata
                 </div>
               </CardContent>
             </Card>
