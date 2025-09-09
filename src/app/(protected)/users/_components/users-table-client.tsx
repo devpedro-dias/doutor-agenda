@@ -29,7 +29,6 @@ const UsersTableClient = ({ initialUsers }: UsersTableClientProps) => {
       const data = await getUsersAction();
       setUsers(data);
     } catch (error) {
-      console.error("Erro ao carregar usuários:", error);
     } finally {
       setIsLoading(false);
     }

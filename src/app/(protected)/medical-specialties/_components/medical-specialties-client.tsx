@@ -49,7 +49,6 @@ export function MedicalSpecialtiesClient({
       const updatedSpecialties = await getMedicalSpecialtiesAction();
       setSpecialties(updatedSpecialties);
     } catch (error) {
-      console.error("Erro ao recarregar especialidades:", error);
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +69,6 @@ export function MedicalSpecialtiesClient({
         loadSpecialties();
       }
     } catch (error) {
-      console.error("Erro ao popular especialidades:", error);
       toast.error("Erro ao popular especialidades");
     } finally {
       setIsLoading(false);

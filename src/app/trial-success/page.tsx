@@ -15,7 +15,6 @@ export default async function TrialSuccessPage({
   const sessionId = resolvedSearchParams.session_id;
   const subscriptionId = resolvedSearchParams.subscription_id;
 
-  console.log("🎯 Trial success page loaded:", {
     sessionId,
     subscriptionId,
   });

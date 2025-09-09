@@ -67,7 +67,6 @@ export const auth = betterAuth({
           }
         } catch (error) {
           // Se houver erro ao ler o cookie, usar a primeira clínica
-          console.error("Erro ao ler cookie da clínica selecionada:", error);
         }
 
         return {
@@ -80,7 +79,6 @@ export const auth = betterAuth({
           session,
         };
       } catch (error) {
-        console.error("Error in custom session:", error);
         // Return basic user data if database query fails
         return {
           user: {

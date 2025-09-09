@@ -27,7 +27,6 @@ export const createTrialUser = actionClient
       });
 
       if (existingUser) {
-        console.log("Trial user already exists:", email);
 
         // Atualizar dados do usuário existente se necessário
         if (!existingUser.stripeCustomerId) {
@@ -82,7 +81,6 @@ export const createTrialUser = actionClient
         })
         .returning();
 
-      console.log("✅ Trial user created successfully:", {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
@@ -100,7 +98,6 @@ export const createTrialUser = actionClient
         },
       };
     } catch (error) {
-      console.error("Error creating trial user:", error);
       throw new Error("Falha ao criar usuário trial");
     }
   });

@@ -15,7 +15,6 @@ export function HeroSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("[v0] Lead captured:", { name, email, phone })
     // Here you would typically send the data to your backend
   }
 

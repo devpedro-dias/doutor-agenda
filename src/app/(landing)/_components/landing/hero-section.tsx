@@ -37,7 +37,6 @@ export function HeroSection() {
       });
     },
     onError: (error) => {
-      console.error("Erro ao criar checkout:", error);
     },
   });
 

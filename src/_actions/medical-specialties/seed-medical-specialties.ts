@@ -269,7 +269,6 @@ export const seedMedicalSpecialtiesAction = async () => {
       createdCount,
     };
   } catch (error) {
-    console.error("Erro ao criar especialidades médicas:", error);
     throw new Error("Erro ao criar especialidades médicas");
   }
 };

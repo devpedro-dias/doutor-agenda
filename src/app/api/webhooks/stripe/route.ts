@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
     try {
       event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
     } catch (err) {
-      console.error("❌ Webhook signature verification failed:", err);
       return NextResponse.json(
         { error: "Webhook signature verification failed" },
         { status: 400 },
@@ -41,7 +40,6 @@ export async function POST(request: NextRequest) {
           try {
             await handleTrialUserCreation(session);
           } catch (error) {
-            console.error("❌ Error during user creation:", error);
           }
         }
         break;
@@ -49,16 +47,16 @@ export async function POST(request: NextRequest) {
 
       case "customer.subscription.created": {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log("🎯 CUSTOMER SUBSCRIPTION CREATED received!");
-        console.log("🔗 Subscription ID:", subscription.id);
-        console.log("👤 Customer ID:", subscription.customer);
-        console.log("📊 Status:", subscription.status);
-        console.log("📅 Trial end:", subscription.trial_end);
-        console.log("📋 Metadata:", subscription.metadata);
+("🎯 CUSTOMER SUBSCRIPTION CREATED received!");
+("🔗 Subscription ID:", subscription.id);
+("👤 Customer ID:", subscription.customer);
+("📊 Status:", subscription.status);
+("📅 Trial end:", subscription.trial_end);
+("📋 Metadata:", subscription.metadata);
 
         // Verificar se é trial
         const isTrial = subscription.metadata?.isTrial === "true";
-        console.log("🔍 Trial check:", {
+("🔍 Trial check:", {
           isTrial,
           metadataIsTrial: subscription.metadata?.isTrial,
           metadataKeys: Object.keys(subscription.metadata || {}),
@@ -66,28 +64,28 @@ export async function POST(request: NextRequest) {
 
         // Atualizar usuário com informações da subscription
         if (isTrial) {
-          console.log("✅ Processing trial subscription update...");
+("✅ Processing trial subscription update...");
           try {
             await updateUserWithSubscription(subscription);
-            console.log("✅ Trial subscription update completed!");
+("✅ Trial subscription update completed!");
           } catch (error) {
-            console.error("❌ Error in trial subscription update:", error);
-            console.error(
+("❌ Error in trial subscription update:", error);
+(
               "Stack:",
               error instanceof Error ? error.stack : "No stack",
             );
           }
         } else {
-          console.log("❌ Not a trial subscription - skipping update");
+("❌ Not a trial subscription - skipping update");
         }
         break;
       }
 
       case "setup_intent.succeeded": {
         const setupIntent = event.data.object as Stripe.SetupIntent;
-        console.log("🔧 Setup intent succeeded:", setupIntent.id);
-        console.log("👤 Customer ID:", setupIntent.customer);
-        console.log("💳 Payment method:", setupIntent.payment_method);
+("🔧 Setup intent succeeded:", setupIntent.id);
+("👤 Customer ID:", setupIntent.customer);
+("💳 Payment method:", setupIntent.payment_method);
 
         // Aqui podemos fazer alguma ação quando o setup for concluído
         // Como ativar a subscription ou enviar confirmação
@@ -95,12 +93,12 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type ${event.type}`);
+(`Unhandled event type ${event.type}`);
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Webhook error:", error);
+("Webhook error:", error);
     return NextResponse.json(
       { error: "Webhook handler failed" },
       { status: 500 },
@@ -110,14 +108,14 @@ export async function POST(request: NextRequest) {
 
 async function handleTrialUserCreation(session: Stripe.Checkout.Session) {
   try {
-    console.log("🚀 Starting trial user creation process...");
+("🚀 Starting trial user creation process...");
     const { email, name, phone, planId } = session.metadata!;
 
-    console.log("📝 User data from session:", { email, name, phone, planId });
+("📝 User data from session:", { email, name, phone, planId });
 
     // Validar dados obrigatórios
     if (!email || !name) {
-      console.error("❌ Missing required user data:", { email, name });
+("❌ Missing required user data:", { email, name });
       throw new Error("Missing required user data");
     }
 
@@ -127,19 +125,19 @@ async function handleTrialUserCreation(session: Stripe.Checkout.Session) {
     });
 
     if (existingUser) {
-      console.log("User already exists:", email);
+("User already exists:", email);
       return;
     }
 
     // Verificar se temos um customer ID
     const customerId = session.customer as string;
     if (!customerId) {
-      console.error("No customer ID found in session");
+("No customer ID found in session");
       throw new Error("No customer ID found in session");
     }
 
     // Criar usuário usando server action
-    console.log("🔄 Calling createTrialUser server action...");
+("🔄 Calling createTrialUser server action...");
     const result = await createTrialUser({
       email,
       name,
@@ -148,19 +146,19 @@ async function handleTrialUserCreation(session: Stripe.Checkout.Session) {
       customerId,
     });
 
-    console.log("📋 Server action result:", result);
+("📋 Server action result:", result);
 
     if (!result?.data?.success) {
-      console.error("❌ Server action failed:", result);
+("❌ Server action failed:", result);
       throw new Error("Failed to create trial user");
     }
 
-    console.log("✅ Trial user created via server action:", result.data.user);
+("✅ Trial user created via server action:", result.data.user);
 
     // Enviar email de boas-vindas/verificação
     // Você pode implementar isso com um serviço de email como Resend, SendGrid, etc.
   } catch (error) {
-    console.error("Error creating trial user:", error);
+("Error creating trial user:", error);
     throw error;
   }
 }
@@ -170,8 +168,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     const customerId = subscription.customer as string;
     const subscriptionId = subscription.id;
 
-    console.log("🔄 STARTING subscription update process");
-    console.log("📊 Subscription details:", {
+("🔄 STARTING subscription update process");
+("📊 Subscription details:", {
       id: subscriptionId,
       customerId,
       status: subscription.status,
@@ -181,18 +179,18 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Verificar se temos um customerId válido
     if (!customerId) {
-      console.error("❌ No customer ID found in subscription");
+("❌ No customer ID found in subscription");
       return;
     }
 
-    console.log("🔍 MULTI-STRATEGY USER SEARCH...");
+("🔍 MULTI-STRATEGY USER SEARCH...");
 
     // Estratégia 1: Buscar por customerId
     let existingUser = await db.query.usersTable.findFirst({
       where: eq(usersTable.stripeCustomerId, customerId),
     });
 
-    console.log("📋 Strategy 1 - Search by customerId:", {
+("📋 Strategy 1 - Search by customerId:", {
       found: !!existingUser,
       customerId,
       userId: existingUser?.id,
@@ -202,14 +200,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Estratégia 2: Se não encontrou, tentar buscar pelo email nos metadados
     if (!existingUser && subscription.metadata?.email) {
-      console.log("🔄 Strategy 2 - CustomerId failed, trying email lookup");
-      console.log("📧 Searching by email:", subscription.metadata.email);
+("🔄 Strategy 2 - CustomerId failed, trying email lookup");
+("📧 Searching by email:", subscription.metadata.email);
 
       existingUser = await db.query.usersTable.findFirst({
         where: eq(usersTable.email, subscription.metadata.email),
       });
 
-      console.log("📋 Strategy 2 - Search by email result:", {
+("📋 Strategy 2 - Search by email result:", {
         found: !!existingUser,
         email: subscription.metadata.email,
         userId: existingUser?.id,
@@ -219,7 +217,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
       // Se encontrou pelo email, atualizar o customerId
       if (existingUser && !existingUser.stripeCustomerId) {
-        console.log(
+(
           "📝 Strategy 2 - User found by email but missing customerId - updating...",
         );
         await db
@@ -230,7 +228,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           })
           .where(eq(usersTable.id, existingUser.id));
 
-        console.log(
+(
           "✅ Strategy 2 - CustomerId updated for user:",
           existingUser.id,
         );
@@ -239,7 +237,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Estratégia 3: Timing issue - buscar usuários criados recentemente
     if (!existingUser) {
-      console.log(
+(
         "🔄 Strategy 3 - Timing issue detected, searching recent users...",
       );
 
@@ -250,8 +248,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
         where: (users, { gte }) => gte(users.createdAt, tenMinutesAgo),
       });
 
-      console.log(`📋 Strategy 3 - Found ${recentUsers.length} recent users`);
-      console.log(
+(`📋 Strategy 3 - Found ${recentUsers.length} recent users`);
+(
         "📋 Recent users:",
         recentUsers.map((u) => ({
           id: u.id,
@@ -268,14 +266,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           (user) => user.email === subscription.metadata?.email,
         );
         if (existingUser) {
-          console.log(
+(
             "✅ Strategy 3 - Found user by email in recent users:",
             existingUser.id,
           );
 
           // Atualizar customerId se necessário
           if (!existingUser.stripeCustomerId) {
-            console.log("📝 Strategy 3 - Updating missing customerId...");
+("📝 Strategy 3 - Updating missing customerId...");
             await db
               .update(usersTable)
               .set({
@@ -283,7 +281,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
                 updatedAt: new Date(),
               })
               .where(eq(usersTable.id, existingUser.id));
-            console.log("✅ Strategy 3 - CustomerId updated");
+("✅ Strategy 3 - CustomerId updated");
           }
         }
       }
@@ -294,7 +292,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           (user) => user.stripeCustomerId === customerId,
         );
         if (existingUser) {
-          console.log(
+(
             "✅ Strategy 3 - Found user by customerId in recent users:",
             existingUser.id,
           );
@@ -303,7 +301,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     }
 
     if (!existingUser) {
-      console.error("❌ CRITICAL: User not found for subscription update!", {
+("❌ CRITICAL: User not found for subscription update!", {
         customerId,
         email: subscription.metadata?.email,
         subscriptionId,
@@ -311,8 +309,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
       return;
     }
 
-    console.log("🎯 User found! Preparing to update subscription...");
-    console.log("📊 Current user data:", {
+("🎯 User found! Preparing to update subscription...");
+("📊 Current user data:", {
       id: existingUser.id,
       email: existingUser.email,
       currentSubscriptionId: existingUser.stripeSubscriptionId,
@@ -320,7 +318,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     });
 
     // Atualizar usuário com subscription ID
-    console.log("💾 Executing database update...");
+("💾 Executing database update...");
 
     const updateResult = await db
       .update(usersTable)
@@ -331,14 +329,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
       })
       .where(eq(usersTable.id, existingUser.id));
 
-    console.log("✅ Database update executed:", updateResult);
+("✅ Database update executed:", updateResult);
 
     // Verificar se a atualização foi bem-sucedida
     const updatedUser = await db.query.usersTable.findFirst({
       where: eq(usersTable.id, existingUser.id),
     });
 
-    console.log("🔍 VERIFICATION - Updated user data:", {
+("🔍 VERIFICATION - Updated user data:", {
       id: updatedUser?.id,
       email: updatedUser?.email,
       stripeSubscriptionId: updatedUser?.stripeSubscriptionId,
@@ -347,16 +345,16 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     });
 
     if (updatedUser?.stripeSubscriptionId === subscriptionId) {
-      console.log("🎉 SUCCESS: Subscription ID updated correctly!");
+("🎉 SUCCESS: Subscription ID updated correctly!");
     } else {
-      console.error("❌ FAILURE: Subscription ID was not updated!", {
+("❌ FAILURE: Subscription ID was not updated!", {
         expected: subscriptionId,
         actual: updatedUser?.stripeSubscriptionId,
       });
     }
   } catch (error) {
-    console.error("❌ CRITICAL ERROR in updateUserWithSubscription:", error);
-    console.error(
+("❌ CRITICAL ERROR in updateUserWithSubscription:", error);
+(
       "Stack trace:",
       error instanceof Error ? error.stack : "No stack trace",
     );
@@ -365,19 +363,19 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 }
 
     if (existingUser) {
-      console.log("User already exists:", email);
+("User already exists:", email);
       return;
     }
 
     // Verificar se temos um customer ID
     const customerId = session.customer as string;
     if (!customerId) {
-      console.error("No customer ID found in session");
+("No customer ID found in session");
       throw new Error("No customer ID found in session");
     }
 
     // Criar usuário usando server action
-    console.log("🔄 Calling createTrialUser server action...");
+("🔄 Calling createTrialUser server action...");
     const result = await createTrialUser({
       email,
       name,
@@ -386,19 +384,19 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
       customerId,
     });
 
-    console.log("📋 Server action result:", result);
+("📋 Server action result:", result);
 
     if (!result?.data?.success) {
-      console.error("❌ Server action failed:", result);
+("❌ Server action failed:", result);
       throw new Error("Failed to create trial user");
     }
 
-    console.log("✅ Trial user created via server action:", result.data.user);
+("✅ Trial user created via server action:", result.data.user);
 
     // Enviar email de boas-vindas/verificação
     // Você pode implementar isso com um serviço de email como Resend, SendGrid, etc.
   } catch (error) {
-    console.error("Error creating trial user:", error);
+("Error creating trial user:", error);
     throw error;
   }
 }
@@ -408,8 +406,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     const customerId = subscription.customer as string;
     const subscriptionId = subscription.id;
 
-    console.log("🔄 STARTING subscription update process");
-    console.log("📊 Subscription details:", {
+("🔄 STARTING subscription update process");
+("📊 Subscription details:", {
       id: subscriptionId,
       customerId,
       status: subscription.status,
@@ -419,18 +417,18 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Verificar se temos um customerId válido
     if (!customerId) {
-      console.error("❌ No customer ID found in subscription");
+("❌ No customer ID found in subscription");
       return;
     }
 
-    console.log("🔍 MULTI-STRATEGY USER SEARCH...");
+("🔍 MULTI-STRATEGY USER SEARCH...");
 
     // Estratégia 1: Buscar por customerId
     let existingUser = await db.query.usersTable.findFirst({
       where: eq(usersTable.stripeCustomerId, customerId),
     });
 
-    console.log("📋 Strategy 1 - Search by customerId:", {
+("📋 Strategy 1 - Search by customerId:", {
       found: !!existingUser,
       customerId,
       userId: existingUser?.id,
@@ -440,14 +438,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Estratégia 2: Se não encontrou, tentar buscar pelo email nos metadados
     if (!existingUser && subscription.metadata?.email) {
-      console.log("🔄 Strategy 2 - CustomerId failed, trying email lookup");
-      console.log("📧 Searching by email:", subscription.metadata.email);
+("🔄 Strategy 2 - CustomerId failed, trying email lookup");
+("📧 Searching by email:", subscription.metadata.email);
 
       existingUser = await db.query.usersTable.findFirst({
         where: eq(usersTable.email, subscription.metadata.email),
       });
 
-      console.log("📋 Strategy 2 - Search by email result:", {
+("📋 Strategy 2 - Search by email result:", {
         found: !!existingUser,
         email: subscription.metadata.email,
         userId: existingUser?.id,
@@ -457,7 +455,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
       // Se encontrou pelo email, atualizar o customerId
       if (existingUser && !existingUser.stripeCustomerId) {
-        console.log(
+(
           "📝 Strategy 2 - User found by email but missing customerId - updating...",
         );
         await db
@@ -468,7 +466,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           })
           .where(eq(usersTable.id, existingUser.id));
 
-        console.log(
+(
           "✅ Strategy 2 - CustomerId updated for user:",
           existingUser.id,
         );
@@ -477,7 +475,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
 
     // Estratégia 3: Timing issue - buscar usuários criados recentemente
     if (!existingUser) {
-      console.log(
+(
         "🔄 Strategy 3 - Timing issue detected, searching recent users...",
       );
 
@@ -488,8 +486,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
         where: (users, { gte }) => gte(users.createdAt, tenMinutesAgo),
       });
 
-      console.log(`📋 Strategy 3 - Found ${recentUsers.length} recent users`);
-      console.log(
+(`📋 Strategy 3 - Found ${recentUsers.length} recent users`);
+(
         "📋 Recent users:",
         recentUsers.map((u) => ({
           id: u.id,
@@ -506,14 +504,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           (user) => user.email === subscription.metadata?.email,
         );
         if (existingUser) {
-          console.log(
+(
             "✅ Strategy 3 - Found user by email in recent users:",
             existingUser.id,
           );
 
           // Atualizar customerId se necessário
           if (!existingUser.stripeCustomerId) {
-            console.log("📝 Strategy 3 - Updating missing customerId...");
+("📝 Strategy 3 - Updating missing customerId...");
             await db
               .update(usersTable)
               .set({
@@ -521,7 +519,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
                 updatedAt: new Date(),
               })
               .where(eq(usersTable.id, existingUser.id));
-            console.log("✅ Strategy 3 - CustomerId updated");
+("✅ Strategy 3 - CustomerId updated");
           }
         }
       }
@@ -532,7 +530,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
           (user) => user.stripeCustomerId === customerId,
         );
         if (existingUser) {
-          console.log(
+(
             "✅ Strategy 3 - Found user by customerId in recent users:",
             existingUser.id,
           );
@@ -541,7 +539,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     }
 
     if (!existingUser) {
-      console.error("❌ CRITICAL: User not found for subscription update!", {
+("❌ CRITICAL: User not found for subscription update!", {
         customerId,
         email: subscription.metadata?.email,
         subscriptionId,
@@ -549,8 +547,8 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
       return;
     }
 
-    console.log("🎯 User found! Preparing to update subscription...");
-    console.log("📊 Current user data:", {
+("🎯 User found! Preparing to update subscription...");
+("📊 Current user data:", {
       id: existingUser.id,
       email: existingUser.email,
       currentSubscriptionId: existingUser.stripeSubscriptionId,
@@ -558,7 +556,7 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     });
 
     // Atualizar usuário com subscription ID
-    console.log("💾 Executing database update...");
+("💾 Executing database update...");
 
     const updateResult = await db
       .update(usersTable)
@@ -569,14 +567,14 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
       })
       .where(eq(usersTable.id, existingUser.id));
 
-    console.log("✅ Database update executed:", updateResult);
+("✅ Database update executed:", updateResult);
 
     // Verificar se a atualização foi bem-sucedida
     const updatedUser = await db.query.usersTable.findFirst({
       where: eq(usersTable.id, existingUser.id),
     });
 
-    console.log("🔍 VERIFICATION - Updated user data:", {
+("🔍 VERIFICATION - Updated user data:", {
       id: updatedUser?.id,
       email: updatedUser?.email,
       stripeSubscriptionId: updatedUser?.stripeSubscriptionId,
@@ -585,16 +583,16 @@ async function updateUserWithSubscription(subscription: Stripe.Subscription) {
     });
 
     if (updatedUser?.stripeSubscriptionId === subscriptionId) {
-      console.log("🎉 SUCCESS: Subscription ID updated correctly!");
+("🎉 SUCCESS: Subscription ID updated correctly!");
     } else {
-      console.error("❌ FAILURE: Subscription ID was not updated!", {
+("❌ FAILURE: Subscription ID was not updated!", {
         expected: subscriptionId,
         actual: updatedUser?.stripeSubscriptionId,
       });
     }
   } catch (error) {
-    console.error("❌ CRITICAL ERROR in updateUserWithSubscription:", error);
-    console.error(
+("❌ CRITICAL ERROR in updateUserWithSubscription:", error);
+(
       "Stack trace:",
       error instanceof Error ? error.stack : "No stack trace",
     );

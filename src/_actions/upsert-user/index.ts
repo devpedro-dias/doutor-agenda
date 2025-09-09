@@ -200,7 +200,6 @@ export const upsertAction = actionClient
 
       revalidatePath("/users");
     } catch (error) {
-      console.error("UpsertUser - Error during operation:", error);
       throw error; // Re-throw to let next-safe-action handle it
     }
   });

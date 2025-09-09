@@ -22,17 +22,7 @@ export const createTrialCheckout = actionClient
       throw new Error("Stripe basic plan price ID not found");
     }
 
-    console.log("🛒 Creating Stripe trial setup with data:", {
-      email: parsedInput.email,
-      name: parsedInput.name,
-      phone: parsedInput.phone,
-      priceId: process.env.STRIPE_BASIC_PLAN_PRICE_ID,
-    });
 
-    console.log("🔧 Environment check:", {
-      hasSecretKey: !!process.env.STRIPE_SECRET_KEY,
-      hasPriceId: !!process.env.STRIPE_BASIC_PLAN_PRICE_ID,
-    });
 
     // Primeiro, criar um customer
     const customer = await stripe.customers.create({
@@ -45,7 +35,6 @@ export const createTrialCheckout = actionClient
       },
     });
 
-    console.log("👤 Customer created:", customer.id);
 
     // Depois, criar uma subscription com trial
     const subscription = await stripe.subscriptions.create({
@@ -66,7 +55,6 @@ export const createTrialCheckout = actionClient
       },
     });
 
-    console.log("📝 Subscription created:", subscription.id);
 
     // Agora criar a sessão de checkout para coletar método de pagamento
     const sessionConfig = {
@@ -87,12 +75,10 @@ export const createTrialCheckout = actionClient
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/`,
     };
 
-    console.log("📋 Session config metadata:", sessionConfig.metadata);
 
     const { id: sessionId } =
       await stripe.checkout.sessions.create(sessionConfig);
 
-    console.log("✅ Stripe setup session created:", sessionId);
 
     return {
       sessionId,

@@ -137,7 +137,6 @@ const DashboardContent = () => {
 
         setDashboardData(data);
       } catch (error) {
-        console.error("Erro ao carregar dashboard:", error);
       } finally {
         setIsLoading(false);
       }

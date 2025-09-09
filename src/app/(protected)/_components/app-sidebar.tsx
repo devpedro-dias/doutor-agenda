@@ -106,7 +106,6 @@ export const AppSidebar = () => {
         window.location.reload();
       }
     } catch (error) {
-      console.error("Erro ao trocar de clínica:", error);
       toast.error("Erro ao trocar de clínica");
       setIsSwitchingClinic(false);
     }
