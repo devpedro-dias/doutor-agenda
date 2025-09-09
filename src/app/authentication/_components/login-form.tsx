@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/src/_components/ui/button";
 import {
   Card,
@@ -43,6 +44,35 @@ const loginSchema = z.object({
 
 const LoginForm = () => {
   const router = useRouter();
+
+  // Limpar dados antigos ao carregar a página
+  useEffect(() => {
+    try {
+      // Limpar localStorage relacionado ao auth
+      const keysToRemove = Object.keys(localStorage).filter(
+        (key) =>
+          key.includes("auth") ||
+          key.includes("better-auth") ||
+          key.includes("session"),
+      );
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+      // Limpar cookies relacionados ao auth
+      document.cookie.split(";").forEach((cookie) => {
+        const [name] = cookie.trim().split("=");
+        if (
+          name &&
+          (name.includes("auth") ||
+            name.includes("better-auth") ||
+            name.includes("session"))
+        ) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        }
+      });
+    } catch (error) {
+      console.log("Erro ao limpar cache:", error);
+    }
+  }, []);
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -69,10 +99,37 @@ const LoginForm = () => {
   };
 
   const handleGoogleLogin = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
+    // Definir cookie de trial se estiver no contexto de trial
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("trial") === "true") {
+      document.cookie = "isTrial=true; path=/; max-age=604800; samesite=lax";
+    }
+
+    // Para login com Google, tentar obter o email do usuário logado no Google
+    // Se não conseguir, redirecionar para OAuth normalmente
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      });
+    } catch (error: unknown) {
+      // Tratar erros específicos de autenticação
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      if (errorMessage?.includes("não encontrado")) {
+        toast.error(
+          "Usuário não encontrado. Para criar uma conta, inicie o período de teste primeiro.",
+        );
+      } else if (errorMessage?.includes("não autorizado")) {
+        toast.error("Conta sem plano ativo. Entre em contato com o suporte.");
+      } else if (errorMessage?.includes("deve ter um plano ativo")) {
+        toast.error(
+          "Para criar uma conta, inicie o período de teste primeiro.",
+        );
+      } else {
+        toast.error("Erro ao fazer login com Google. Tente novamente.");
+      }
+    }
   };
 
   return (

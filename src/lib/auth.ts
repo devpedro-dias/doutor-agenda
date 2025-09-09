@@ -38,6 +38,22 @@ export const auth = betterAuth({
           }),
         ]);
 
+        // Verificar se o usuário existe no banco
+        if (!userData) {
+          return {
+            user: { ...user, plan: null, clinic: null, clinics: [] },
+            session,
+          };
+        }
+
+        // Verificar se o usuário tem plano ativo (validação adicional)
+        if (!userData.plan && userData.plan !== "trial") {
+          return {
+            user: { ...user, plan: null, clinic: null, clinics: [] },
+            session,
+          };
+        }
+
         // Incluir todas as clínicas do usuário
         const userClinics =
           clinics?.map((userClinic) => ({
@@ -65,7 +81,7 @@ export const auth = betterAuth({
               selectedClinic = parsedClinic;
             }
           }
-          } catch {
+        } catch {
           // Se houver erro ao ler o cookie, usar a primeira clínica
         }
 
@@ -78,13 +94,16 @@ export const auth = betterAuth({
           },
           session,
         };
-          } catch {
-        // Return basic user data if database query fails
+      } catch (error) {
+        // Log do erro para debug
+        console.error("Erro na validação da sessão:", error);
+
+        // Em caso de erro, retornar dados básicos para segurança
         return {
           user: {
             ...user,
             plan: null,
-            clinic: undefined,
+            clinic: null,
             clinics: [],
           },
           session,
