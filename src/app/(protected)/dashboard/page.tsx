@@ -118,7 +118,7 @@ const DashboardContent = () => {
         }
 
         if (!session.data.user.plan) {
-          window.location.href = "/new-subscription";
+          window.location.href = "/";
           return;
         }
 
@@ -136,7 +136,7 @@ const DashboardContent = () => {
         });
 
         setDashboardData(data);
-        } catch {
+      } catch {
       } finally {
         setIsLoading(false);
       }

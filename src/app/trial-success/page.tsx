@@ -98,7 +98,7 @@ export default async function TrialSuccessPage({
 
         {/* CTA Button */}
         <Button asChild className="w-full">
-          <Link href={session ? "/dashboard" : "/authentication"}>
+          <Link href={session ? "/dashboard" : "/authentication?trial=true"}>
             {session ? "Ir para o Dashboard" : "Fazer Login"}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
