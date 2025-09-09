@@ -26,7 +26,10 @@ export const createTrialUser = actionClient
 
       if (existingUser) {
         // Se o usuário existe mas não tem customerId ou subscriptionId, atualiza
-        if (!existingUser.stripeCustomerId || !existingUser.stripeSubscriptionId) {
+        if (
+          !existingUser.stripeCustomerId ||
+          !existingUser.stripeSubscriptionId
+        ) {
           await db
             .update(usersTable)
             .set({
@@ -51,28 +54,31 @@ export const createTrialUser = actionClient
 
       const userId = crypto.randomUUID();
 
-      const result = await db.insert(usersTable).values({
-        id: userId,
-        name,
-        email,
-        phoneNumber: phone,
-        plan: planId,
-        stripeCustomerId: customerId,
-        stripeSubscriptionId: null,
-        emailVerified: false,
-        cpf: null,
-        address: null,
-        cep: null,
-        street: null,
-        number: null,
-        complement: null,
-        neighborhood: null,
-        city: null,
-        state: null,
-        image: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }).returning();
+      const result = await db
+        .insert(usersTable)
+        .values({
+          id: userId,
+          name,
+          email,
+          phoneNumber: phone,
+          plan: planId,
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: null,
+          emailVerified: false,
+          cpf: null,
+          address: null,
+          cep: null,
+          street: null,
+          number: null,
+          complement: null,
+          neighborhood: null,
+          city: null,
+          state: null,
+          image: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
 
       const newUser = result[0];
 

@@ -60,7 +60,6 @@ export async function POST(request: NextRequest) {
       }
 
       case "setup_intent.succeeded": {
-
         // Aqui podemos fazer alguma ação quando o setup for concluído
         // Como ativar a subscription ou enviar confirmação
         break;
