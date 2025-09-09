@@ -100,7 +100,7 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col items-center justify-between border-t pt-8 md:flex-row">
           <p className="text-muted-foreground text-sm">
-            © 2024 Dr. Agenda. Todos os direitos reservados.
+            © 2025 Dr. Agenda. Todos os direitos reservados.
           </p>
           <div className="mt-4 flex space-x-4 md:mt-0">
             <a

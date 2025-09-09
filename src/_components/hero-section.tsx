@@ -152,7 +152,7 @@ export function HeroSection() {
                   </div>
                   <Button
                     type="submit"
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground group h-12 w-full text-base"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground group dark:bg-accent dark:hover:bg-accent/90 dark:text-accent-foreground h-12 w-full text-base"
                     disabled={createTrialCheckoutAction.isExecuting}
                   >
                     {createTrialCheckoutAction.isExecuting ? (

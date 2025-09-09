@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/src/_components/ui/button";
 import { Menu, X, Stethoscope } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "@/src/_components/theme-toggle";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,28 +46,31 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center space-x-8 md:flex">
+          <div className="hidden items-center space-x-2 md:flex">
             {navItems.map((item) => (
-              <button
+              <Button
                 key={item.name}
                 onClick={() => handleSmoothScroll(item.href)}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200"
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200 hover:bg-transparent dark:hover:bg-transparent"
               >
                 {item.name}
-              </button>
+              </Button>
             ))}
           </div>
 
           {/* Desktop Buttons */}
           <div className="hidden items-center space-x-4 md:flex">
+            <ThemeToggle />
             <Button
               variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground hover:bg-transparent dark:hover:bg-transparent"
+              asChild
             >
               <Link href="/authentication">Já sou cliente</Link>
             </Button>
             <Button
-              className="bg-accent hover:bg-accent/90 text-accent-foreground animate-pulse-glow"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground animate-pulse-glow dark:bg-accent dark:hover:bg-accent/90 dark:text-accent-foreground"
               onClick={() => handleSmoothScroll("#planos")}
             >
               Começar
@@ -103,6 +107,9 @@ export function Navbar() {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
+                <div className="flex justify-start pb-2">
+                  <ThemeToggle />
+                </div>
                 <Button variant="ghost" className="justify-start" asChild>
                   <Link href="/authentication">Já sou cliente</Link>
                 </Button>
