@@ -34,22 +34,16 @@ export default async function ErrorPage({ searchParams }: ErrorPageProps) {
           <h1 className="text-2xl font-bold text-red-600">
             Erro de Autenticação
           </h1>
-          <p className="text-muted-foreground">
-            {getErrorMessage(error)}
-          </p>
+          <p className="text-muted-foreground">{getErrorMessage(error)}</p>
         </div>
 
         <div className="space-y-4">
           <Button asChild className="w-full">
-            <Link href="/authentication">
-              Tentar Novamente
-            </Link>
+            <Link href="/authentication">Tentar Novamente</Link>
           </Button>
 
           <Button variant="outline" asChild className="w-full">
-            <Link href="/">
-              Voltar ao Início
-            </Link>
+            <Link href="/">Voltar ao Início</Link>
           </Button>
         </div>
       </div>
