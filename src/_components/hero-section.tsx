@@ -50,7 +50,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="from-primary/5 via-background to-accent/5 bg-gradient-to-br px-4 pt-24 pb-16 sm:px-6 lg:px-8">
+    <section className="from-primary/5 via-background to-accent/5 bg-gradient-to-br px-4 pt-32 pb-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left Column - Content */}

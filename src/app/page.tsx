@@ -1,10 +1,10 @@
-import { Navbar } from "@/src/app/(landing)/_components/landing/navbar";
-import { HeroSection } from "@/src/app/(landing)/_components/landing/hero-section";
-import { FeaturesSection } from "@/src/app/(landing)/_components/landing/features-section";
-import { BenefitsSection } from "@/src/app/(landing)/_components/landing/benefits-section";
-import { TestimonialsSection } from "@/src/app/(landing)/_components/landing/testimonials-section";
-import { PricingSection } from "@/src/app/(landing)/_components/landing/pricing-section";
-import { Footer } from "@/src/app/(landing)/_components/landing/footer";
+import { Navbar } from "@/src/_components/navbar";
+import { HeroSection } from "@/src/_components/hero-section";
+import { FeaturesSection } from "@/src/_components/features-section";
+import { BenefitsSection } from "@/src/_components/benefits-section";
+import { TestimonialsSection } from "@/src/_components/testimonials-section";
+import { PricingSection } from "@/src/_components/pricing-section";
+import { Footer } from "@/src/_components/footer";
 
 export default function HomePage() {
   return (
